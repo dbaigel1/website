@@ -1,5 +1,49 @@
 /*index.css*/
+
+/*div containing the image and text*/
+#front-page {
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+/*big front page image*/
+img#big-pic {
+	max-width: 100%;
+    height: auto;
+    /*opacity: 0.8;*/
+}
+
+/*text on the front page image*/
 .main-header {
-	color: green;
-	text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 108px; /* TODO: will need to make this responsive*/
+    color: black;
+	
+}
+
+div.blank-space{
+	/*background-color: black;*/
+	height: 100px;
+	max-width: 100%;
+}
+
+div#navigators {
+	text-align:center;
+}
+
+.block1, .block2, .block3 {
+    display: inline-block;
+    background-color: blue;
+    width: 30%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+/* to remove bottom padding from images*/
+img {
+	vertical-align: bottom;
 }
