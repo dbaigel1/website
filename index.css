@@ -3,8 +3,12 @@
 /*div containing the image and text*/
 body {
 	background-color: #a9a9a9;
+	margin: auto 0;
 }
 
+div#front-page {
+	
+}
 
 /*big front page image*/
 img#big-pic {
@@ -21,6 +25,7 @@ img#big-pic {
     transform: translate(-50%, -50%);
     font-size: 108px; /* TODO: will need to make this responsive*/
     color: black;
+
 	
 }
 
