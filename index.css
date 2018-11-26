@@ -106,3 +106,71 @@ div#navigators {
 img {
 	vertical-align: bottom;
 }
+
+/*about section*/
+div.about-section {
+	height: auto;
+	width: auto;
+	background-color: #c1e1ec;
+	margin: auto;
+	padding: 50px;
+}
+
+h1.about-section {
+	text-align: center;
+	
+	margin: auto;
+	font-size: 88px;
+}
+
+p.about-section {
+	text-align: center;
+	font-size: 30px;
+}
+
+div.contact-section {
+	height: auto;
+	width: auto;
+	
+}
+
+a.button1 {
+    
+    border: none;
+    color: white;
+    
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+}
+
+a.button1:hover {
+    background-color: red;
+}
+
+a.button2 {
+
+    border: none;
+    color: white;
+    
+    text-align: center;
+  
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+}
+
+a.button2:hover {
+    background-color: hotpink;
+}
+
+
+
+div.footer {
+	margin: 10px;
+	font-size: 16px;
+	font-weight: bold;
+}
