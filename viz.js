@@ -7,6 +7,8 @@ dataFile.then(function (data) {
     
     console.log(data); 
 
+    var containerWidth = 1000;
+    var containerHeight = 500;
     /* Data Variables */
     var foxAvgPolarity = 0;
     var foxAvgSubj = 0;
@@ -32,7 +34,7 @@ dataFile.then(function (data) {
 	
 	foxNumHeads = foxHeadlines.length;
 	var total = 0;
-	var totalSubj = 0;
+	
 
 	/* polarity */
 	for (var i = 0; i < foxPolarities.length; i++) {
@@ -57,30 +59,34 @@ dataFile.then(function (data) {
 	/*TO-DO: Connect data to viz and make axes */
 	vizData = data;
 	
-	var svgContainer = d3.select("body")
+	var svgContainer = d3.select("#graph")
 	.append("svg")
-	.attr("width", 1000)
-	.attr("height", 500);
-	/*.style("border", "1px solid black")*/
+	.attr("width", containerWidth)
+	.attr("height", containerHeight)
+	/*.style("border", "1px solid black");*/
 
 	/* Create Axes */
 	var axisScaleX = d3.scaleLinear()
                          .domain([-1,1])
-                         .range([0,900]);
+                         .range([50,containerWidth-50]);
 
-	var xAxis = d3.axisBottom()
+	var xAxis = d3.axisTop()
                       .scale(axisScaleX);
 
-    var xAxisGroup = svgContainer.append("g").call(xAxis);
+    var xAxisGroup = svgContainer.append("g")
+    .attr("transform", `translate(0, ${containerHeight-30})`)
+    .call(xAxis);
 
     var axisScaleY = d3.scaleLinear()
     					.domain([0,1])
-    					.range([0,400]);
+    					.range([50,containerHeight-60]);
 
     var yAxis = d3.axisRight()
     				.scale(axisScaleY);
 
-    var yAxisGroup = svgContainer.append("g").call(yAxis);
+    var yAxisGroup = svgContainer.append("g")
+    .attr("transform", "translate(30, 0)")
+    .call(yAxis);
 	
     /* Scale data to conform to axes */
     var scaledFoxPolarities = [];
@@ -113,12 +119,26 @@ dataFile.then(function (data) {
 	scaledFoxAvgSubj = total/scaledFoxSubjs.length;
 
 	var svgCircles = svgContainer.append("circle")
-	.attr("cx", scaledFoxAvgPolarity)
-	.attr("cy", scaledFoxAvgSubj)
-	.attr("r", 30)
-	.style("fill", "lightblue")
+								.attr("cx", scaledFoxAvgPolarity)
+								.attr("cy", scaledFoxAvgSubj)
+								.attr("r", 30)
+								.style("fill", "lightblue")
 
+	/* axis labels*/
+	var xLabel = svgContainer.append("text")
+						     .attr("text-anchor", "middle")
+						     .attr("x", containerWidth/2)
+						     .attr("y", containerHeight-10)
+						     .style("font-size", "20px")
+						     .text("Polarity");
 
+	var yLabel = svgContainer.append("text")
+							.attr("text-anchor", "middle")
+						    .attr("y", 15)
+						    .attr("x", -containerHeight/2)	
+						    .attr("transform", "rotate(-90)")
+						    .style("font-size", "20px")
+						    .text("Subjectivity");
 
 }, function (error) {
     console.error('file loading error: ', error);
