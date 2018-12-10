@@ -1,4 +1,6 @@
 
+
+
 /*get data*/
 var dataFile = d3.csv("data_file.csv");
 dataFile.then(function (data) {
@@ -52,20 +54,68 @@ dataFile.then(function (data) {
 	console.log("Average Fox Subjectivity: " + foxAvgSubj);
 
 	/* Do D3 stuff */
+	/*TO-DO: Connect data to viz and make axes */
 	vizData = data;
-	console.log(vizData);
-
-
+	
 	var svgContainer = d3.select("body")
 	.append("svg")
-	.attr("width", 500)
-	.attr("height", 500)
-	.style("border", "1px solid black")
+	.attr("width", 1000)
+	.attr("height", 500);
+	/*.style("border", "1px solid black")*/
+
+	/* Create Axes */
+	var axisScaleX = d3.scaleLinear()
+                         .domain([-1,1])
+                         .range([0,900]);
+
+	var xAxis = d3.axisBottom()
+                      .scale(axisScaleX);
+
+    var xAxisGroup = svgContainer.append("g").call(xAxis);
+
+    var axisScaleY = d3.scaleLinear()
+    					.domain([0,1])
+    					.range([0,400]);
+
+    var yAxis = d3.axisRight()
+    				.scale(axisScaleY);
+
+    var yAxisGroup = svgContainer.append("g").call(yAxis);
 	
+    /* Scale data to conform to axes */
+    var scaledFoxPolarities = [];
+ 	var scaledFoxSubjs = [];
+
+ 	for (var i = 0; i < foxPolarities.length; i++) {
+  		scaledFoxPolarities[i] = axisScaleX(foxPolarities[i]);
+	}
+	
+	for (var i = 0; i < foxSubjs.length; i++) {
+  		scaledFoxSubjs[i] = axisScaleY(foxSubjs[i]);
+	}
+
+	/* change avg polarity to its scaled form */
+	total = 0;
+	for (var i = 0; i < scaledFoxPolarities.length; i++) {
+		total += parseFloat(scaledFoxPolarities[i]);
+		/*console.log("total is: " + total);*/
+	}
+
+	scaledFoxAvgPolarity = total/scaledFoxPolarities.length;
+
+	/* change avg subjectivity to its scaled form */
+	total = 0;
+	for (var i = 0; i < scaledFoxSubjs.length; i++) {
+		total += parseFloat(scaledFoxSubjs[i]);
+		/*console.log("total is: " + total);*/
+	}
+
+	scaledFoxAvgSubj = total/scaledFoxSubjs.length;
+
 	var svgCircles = svgContainer.append("circle")
-	.attr("cx", 250)
-	.attr("cy", 250)
-	.attr("r", 100)
+	.attr("cx", scaledFoxAvgPolarity)
+	.attr("cy", scaledFoxAvgSubj)
+	.attr("r", 30)
 	.style("fill", "lightblue")
 
 
