@@ -2,27 +2,86 @@
 
 
 /*get data*/
-var dataFile = d3.csv("data_file.csv");
+var dataFile = d3.csv("tempdata_file.csv");
 dataFile.then(function (data) {
     
     console.log(data); 
 
     var containerWidth = 1000;
     var containerHeight = 500;
-    /* Data Variables */
-    var foxAvgPolarity = 0;
-    var foxAvgSubj = 0;
-    var foxNumHeads = 0;
-
+    
     /* Sort data into arrays */
 	var dates = [];
 
+	var allPolarities = []; /* contains all news source polarity arrays */
+	var allSubjs = []; /* contains all news source subjectivity arrays */
+
+	var allAvgPols = []; /* contains all avg polarity values */
+	var allAvgSubjs = []; /* contains all avg subj values */
+
+	var newsSources = ["Fox", "NBC", "Wash Post", "ABC", "Breitbart", "BuzzFeed"]; /* contains order of newssources */
+	
 	/*FOX*/
+	var foxAvgPolarity = 0;
+    var foxAvgSubj = 0;
+    var foxNumHeads = 0;
+
 	var foxHeadlines = [];
 	var foxPolarities = [];
 	var foxSubjs = [];
 	var foxCats = [];
 
+	/*NBC*/
+	var nbcAvgPolarity = 0;
+    var nbcAvgSubj = 0;
+    var nbcNumHeads = 0;
+
+	var nbcHeadlines = [];
+	var nbcPolarities = [];
+	var nbcSubjs = [];
+	var nbcCats = [];
+
+	/*WP*/
+	var wpAvgPolarity = 0;
+    var wpAvgSubj = 0;
+    var wpNumHeads = 0;
+
+	var wpHeadlines = [];
+	var wpPolarities = [];
+	var wpSubjs = [];
+	var wpCats = [];
+
+	/*ABC*/
+	var abcAvgPolarity = 0;
+    var abcAvgSubj = 0;
+    var abcNumHeads = 0;
+
+	var abcHeadlines = [];
+	var abcPolarities = [];
+	var abcSubjs = [];
+	var abcCats = [];
+
+	/*BB*/
+	var bbAvgPolarity = 0;
+    var bbAvgSubj = 0;
+    var bbNumHeads = 0;
+
+	var bbHeadlines = [];
+	var bbPolarities = [];
+	var bbSubjs = [];
+	var bbCats = [];
+
+	/*BF*/
+	var bfAvgPolarity = 0;
+    var bfAvgSubj = 0;
+    var bfNumHeads = 0;
+
+	var bfHeadlines = [];
+	var bfPolarities = [];
+	var bfSubjs = [];
+	var bfCats = [];
+
+	/* give variables data from file */
 	for (var i = 0; i < data.length; i++) {
 		dates[i] = data[i]["Date"];
 
@@ -30,33 +89,101 @@ dataFile.then(function (data) {
 		foxPolarities[i] = data[i]["Fox Polarity"];
 		foxSubjs[i] = data[i]["Fox Subjectivity"];
 		foxCats[i] = data[i]["Fox Category"];
+
+		nbcHeadlines[i] = data[i]["NBC Headline"];
+		nbcPolarities[i] = data[i]["NBC Polarity"];
+		nbcSubjs[i] = data[i]["NBC Subjectivity"];
+		nbcCats[i] = data[i]["NBC Category"];
+
+		wpHeadlines[i] = data[i]["Wash Post Headline"];
+		wpPolarities[i] = data[i]["Wash Post Polarity"];
+		wpSubjs[i] = data[i]["Wash Post Subjectivity"];
+		wpCats[i] = data[i]["Wash Post Category"];
+
+		abcHeadlines[i] = data[i]["ABC Headline"];
+		abcPolarities[i] = data[i]["ABC Polarity"];
+		abcSubjs[i] = data[i]["ABC Subjectivity"];
+		abcCats[i] = data[i]["ABC Category"];
+
+		bbHeadlines[i] = data[i]["Breitbart Headline"];
+		bbPolarities[i] = data[i]["Breitbart Polarity"];
+		bbSubjs[i] = data[i]["Breitbart Subjectivity"];
+		bbCats[i] = data[i]["Breitbart Category"];
+
+		bfHeadlines[i] = data[i]["BuzzFeed Headline"];
+		bfPolarities[i] = data[i]["BuzzFeed Polarity"];
+		bfSubjs[i] = data[i]["BuzzFeed Subjectivity"];
+		bfCats[i] = data[i]["BuzzFeed Category"];
+
 	}
-	
-	foxNumHeads = foxHeadlines.length;
+	/* add data to ~all~ arrays */
+	allPolarities.push(foxPolarities, nbcPolarities, wpPolarities,
+	                   abcPolarities, bbPolarities, bfPolarities);
+	allSubjs.push(foxSubjs, nbcSubjs, wpSubjs, abcSubjs, bbSubjs, bfSubjs);
+	allAvgPols.push(foxAvgPolarity, nbcAvgPolarity, wpAvgPolarity,
+	                abcAvgPolarity, bbAvgPolarity, bfAvgPolarity);
+	allAvgSubjs.push(foxAvgSubj, nbcAvgSubj, wpAvgSubj, abcAvgSubj, bbAvgSubj, bfAvgSubj);
+
+	/* count of headlines of each news source */
+	for (var i = 0; i < data.length; i++) {
+		
+		if (foxHeadlines[i] != "") {
+			foxNumHeads++;
+		}
+
+		if (nbcHeadlines[i] != "") {
+			nbcNumHeads++;
+		}
+
+		if (wpHeadlines[i] != "") {
+			wpNumHeads++;
+		}
+
+		if (abcHeadlines[i] != "") {
+			abcNumHeads++;
+		}
+
+		if (bfHeadlines[i] != "") {
+			bfNumHeads++;
+		}
+
+		if (bbHeadlines[i] != "") {
+			bbNumHeads++;
+		}
+	}
+
 	var total = 0;
-	
 
 	/* polarity */
-	for (var i = 0; i < foxPolarities.length; i++) {
-		total += parseFloat(foxPolarities[i]);
-		/*console.log("total is: " + total);*/
-	}
+	for (var source = 0; source < allPolarities.length; source++) {
+		
+		for (var j = 0; j < allPolarities[source].length; j++) {
+			if(allPolarities[source][j] != ""){
+				total += parseFloat(allPolarities[source][j]);
+			}
+		}
 
-	foxAvgPolarity = total/foxPolarities.length;
-	console.log("Average Fox Polarity: " + foxAvgPolarity);	
-	total = 0;
+		allAvgPols[source] = total / allPolarities[source].length;
+		total = 0;
+		console.log(allAvgPols[source]);
+	}
 
 	/* subjectivity */
-	for (var i = 0; i < foxSubjs.length; i++) {
-		total += parseFloat(foxSubjs[i]);
-		/*console.log("total is: " + total);*/
+	for (var source = 0; source < allSubjs.length; source++) {
+		
+		for (var j = 0; j < allSubjs[source].length; j++) {
+			if (allSubjs[source][j] != ""){
+				total += parseFloat(allSubjs[source][j]);
+			}
+		}
+
+		allAvgSubjs[source] = total / allSubjs[source].length;
+		total = 0;
+		console.log(allAvgSubjs[source]);
 	}
 
-	foxAvgSubj = total/foxSubjs.length;
-	console.log("Average Fox Subjectivity: " + foxAvgSubj);
-
 	/* Do D3 stuff */
-	/*TO-DO: Connect data to viz and make axes */
+	/*TO-DO: rearrange y-axis to be 0 to 1*/
 	vizData = data;
 	
 	var svgContainer = d3.select("#graph")
@@ -88,41 +215,84 @@ dataFile.then(function (data) {
     .attr("transform", "translate(30, 0)")
     .call(yAxis);
 	
+
     /* Scale data to conform to axes */
     var scaledFoxPolarities = [];
  	var scaledFoxSubjs = [];
+ 	var scaledFoxAvgPolarity = 0;
+ 	var scaledFoxAvgSubj = 0;
 
- 	for (var i = 0; i < foxPolarities.length; i++) {
-  		scaledFoxPolarities[i] = axisScaleX(foxPolarities[i]);
-	}
-	
-	for (var i = 0; i < foxSubjs.length; i++) {
-  		scaledFoxSubjs[i] = axisScaleY(foxSubjs[i]);
-	}
+ 	var scaledNBCPolarities = [];
+ 	var scaledNBCSubjs = [];
+ 	var scaledNBCAvgPolarity = 0;
+ 	var scaledNBCAvgSubj = 0;
+ 	
+ 	var scaledWPPols = [];
+ 	var scaledWPSubjs = [];
+ 	var scaledWPAvgPol = 0;
+ 	var scaledWPAvgSubj = 0;
 
-	/* change avg polarity to its scaled form */
+ 	var allScaledPols = [];
+ 	var allScaledSubjs = [];
+ 	allScaledPols.push(scaledFoxPolarities, scaledNBCPolarities, scaledWPPols);
+ 	allScaledSubjs.push(scaledFoxSubjs, scaledNBCSubjs, scaledWPSubjs);
+
+ 	var allScaledAvgPols = [];
+ 	var allScaledAvgSubjs = [];
+ 	allScaledAvgPols.push(scaledFoxAvgPolarity, scaledNBCAvgPolarity, scaledWPAvgPol);
+ 	allScaledAvgSubjs.push(scaledFoxAvgSubj, scaledNBCAvgSubj, scaledWPAvgSubj);
+
+ 	var idealPol = axisScaleX(0);
+ 	var idaelSubj = axisScaleY(0);
+
 	total = 0;
-	for (var i = 0; i < scaledFoxPolarities.length; i++) {
-		total += parseFloat(scaledFoxPolarities[i]);
-		/*console.log("total is: " + total);*/
-	}
+ 	
+ 	/* avg scaled polarity */
+ 	for (var source = 0; source < allScaledPols.length; source++) {
+ 		for (var i = 0; i < allPolarities[source].length; i++) {
+ 			allScaledPols[source][i] = axisScaleX(allPolarities[source][i]);
+ 			total += parseFloat(allScaledPols[source][i]);
+ 		}
+ 		allScaledAvgPols[source] = total/(allScaledPols[source].length);
+ 		total = 0;
+ 	}
 
-	scaledFoxAvgPolarity = total/scaledFoxPolarities.length;
+ 	/* avg scaled subjectivity */
+ 	for (var source = 0; source < allScaledSubjs.length; source++) {
+ 		for (var i = 0; i < allSubjs[source].length; i++) {
+ 			allScaledSubjs[source][i] = axisScaleY(allSubjs[source][i]);
+ 			total += parseFloat(allScaledSubjs[source][i]);
+ 		}
+ 		allScaledAvgSubjs[source] = total/(allScaledSubjs[source].length);
 
-	/* change avg subjectivity to its scaled form */
-	total = 0;
-	for (var i = 0; i < scaledFoxSubjs.length; i++) {
-		total += parseFloat(scaledFoxSubjs[i]);
-		/*console.log("total is: " + total);*/
-	}
+ 		total = 0;
+ 	}
 
-	scaledFoxAvgSubj = total/scaledFoxSubjs.length;
-
+	/* Append circles to graph */
 	var svgCircles = svgContainer.append("circle")
-								.attr("cx", scaledFoxAvgPolarity)
-								.attr("cy", scaledFoxAvgSubj)
-								.attr("r", 30)
-								.style("fill", "lightblue")
+								.attr("cx", allScaledAvgPols[0])
+								.attr("cy", allScaledAvgSubjs[0])
+								.attr("r", 20)
+								.style("fill", "red")
+
+	svgCircles += svgContainer.append("circle")
+								.attr("cx", allScaledAvgPols[1])
+								.attr("cy", allScaledAvgSubjs[1])
+								.attr("r", 20)
+								.style("fill", "orange")
+
+	svgCircles += svgContainer.append("circle")
+								.attr("cx", allScaledAvgPols[2])
+								.attr("cy", allScaledAvgSubjs[2])
+								.attr("r", 20)
+								.style("fill", "yellow")
+
+	/* ideal center of non polar and not subjective */
+	svgCircles += svgContainer.append("circle")
+								.attr("cx", idealPol)
+								.attr("cy", idaelSubj)
+								.attr("r", 10)
+								.style("fill", "black")
 
 	/* axis labels*/
 	var xLabel = svgContainer.append("text")
