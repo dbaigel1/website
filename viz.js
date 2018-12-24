@@ -165,7 +165,6 @@ dataFile.then(function (data) {
 
 		allAvgPols[source] = total / allPolarities[source].length;
 		total = 0;
-		console.log(allAvgPols[source]);
 	}
 
 	/* subjectivity */
@@ -179,7 +178,6 @@ dataFile.then(function (data) {
 
 		allAvgSubjs[source] = total / allSubjs[source].length;
 		total = 0;
-		console.log(allAvgSubjs[source]);
 	}
 
 	/* Do D3 stuff */
@@ -232,60 +230,107 @@ dataFile.then(function (data) {
  	var scaledWPAvgPol = 0;
  	var scaledWPAvgSubj = 0;
 
+ 	var scaledABCPols = [];
+ 	var scaledABCSubjs = [];
+ 	var scaledABCAvgPol = 0;
+ 	var scaledABCAvgSubj = 0;
+
+ 	var scaledBBPols = [];
+ 	var scaledBBSubjs = [];
+ 	var scaledBBAvgPol = 0;
+ 	var scaledBBAvgSubj = 0;
+
+ 	var scaledBFPols = [];
+ 	var scaledBFSubjs = [];
+ 	var scaledBFAvgPol = 0;
+ 	var scaledBFAvgSubj = 0;
+
  	var allScaledPols = [];
  	var allScaledSubjs = [];
- 	allScaledPols.push(scaledFoxPolarities, scaledNBCPolarities, scaledWPPols);
- 	allScaledSubjs.push(scaledFoxSubjs, scaledNBCSubjs, scaledWPSubjs);
+ 	allScaledPols.push(scaledFoxPolarities, scaledNBCPolarities, scaledWPPols,
+ 		               scaledABCPols, scaledBBPols, scaledBFPols);
+ 	allScaledSubjs.push(scaledFoxSubjs, scaledNBCSubjs, scaledWPSubjs,
+ 		                scaledABCSubjs, scaledBBSubjs, scaledBFSubjs);
 
  	var allScaledAvgPols = [];
  	var allScaledAvgSubjs = [];
- 	allScaledAvgPols.push(scaledFoxAvgPolarity, scaledNBCAvgPolarity, scaledWPAvgPol);
- 	allScaledAvgSubjs.push(scaledFoxAvgSubj, scaledNBCAvgSubj, scaledWPAvgSubj);
+ 	allScaledAvgPols.push(scaledFoxAvgPolarity, scaledNBCAvgPolarity, scaledWPAvgPol,
+ 		                  scaledABCAvgPol, scaledBBAvgPol, scaledBFAvgPol);
+ 	allScaledAvgSubjs.push(scaledFoxAvgSubj, scaledNBCAvgSubj, scaledWPAvgSubj,
+ 		                   scaledABCAvgSubj, scaledBBAvgSubj, scaledBFAvgSubj);
 
  	var idealPol = axisScaleX(0);
  	var idaelSubj = axisScaleY(0);
 
 	total = 0;
  	
+ 	/*TO-DO: test and check the avg pol and avg subj calculations (should be fixed )*/
  	/* avg scaled polarity */
  	for (var source = 0; source < allScaledPols.length; source++) {
+ 		var tempLength = 0;
  		for (var i = 0; i < allPolarities[source].length; i++) {
- 			allScaledPols[source][i] = axisScaleX(allPolarities[source][i]);
- 			total += parseFloat(allScaledPols[source][i]);
+ 			if (allPolarities[source][i] != "") {
+ 				allScaledPols[source][i] = axisScaleX(allPolarities[source][i]);
+ 				total += parseFloat(allScaledPols[source][i]);
+ 				tempLength++;
+ 			}
  		}
- 		allScaledAvgPols[source] = total/(allScaledPols[source].length);
+ 		allScaledAvgPols[source] = total/tempLength;
+ 		
  		total = 0;
  	}
 
  	/* avg scaled subjectivity */
  	for (var source = 0; source < allScaledSubjs.length; source++) {
+ 		var tempLength = 0;
  		for (var i = 0; i < allSubjs[source].length; i++) {
- 			allScaledSubjs[source][i] = axisScaleY(allSubjs[source][i]);
- 			total += parseFloat(allScaledSubjs[source][i]);
+ 			if (allSubjs[source][i] != "") {
+ 				allScaledSubjs[source][i] = axisScaleY(allSubjs[source][i]);
+ 				total += parseFloat(allScaledSubjs[source][i]);
+ 				tempLength++;
+ 			}
  		}
- 		allScaledAvgSubjs[source] = total/(allScaledSubjs[source].length);
-
+ 		allScaledAvgSubjs[source] = total/tempLength;
  		total = 0;
  	}
 
 	/* Append circles to graph */
+	/*Fox*/
 	var svgCircles = svgContainer.append("circle")
 								.attr("cx", allScaledAvgPols[0])
 								.attr("cy", allScaledAvgSubjs[0])
 								.attr("r", 20)
 								.style("fill", "red")
-
+	/*NBC*/
 	svgCircles += svgContainer.append("circle")
 								.attr("cx", allScaledAvgPols[1])
 								.attr("cy", allScaledAvgSubjs[1])
 								.attr("r", 20)
 								.style("fill", "orange")
-
+    /*Wash Post*/
 	svgCircles += svgContainer.append("circle")
 								.attr("cx", allScaledAvgPols[2])
 								.attr("cy", allScaledAvgSubjs[2])
 								.attr("r", 20)
 								.style("fill", "yellow")
+	/*ABC*/
+	svgCircles += svgContainer.append("circle")
+								.attr("cx", allScaledAvgPols[3])
+								.attr("cy", allScaledAvgSubjs[3])
+								.attr("r", 20)
+								.style("fill", "lightgreen")
+    /*Breitbart*/
+	svgCircles += svgContainer.append("circle")
+								.attr("cx", allScaledAvgPols[4])
+								.attr("cy", allScaledAvgSubjs[4])
+								.attr("r", 20)
+								.style("fill", "lightblue")
+    /*BuzzFeed*/
+	svgCircles += svgContainer.append("circle")
+								.attr("cx", allScaledAvgPols[5])
+								.attr("cy", allScaledAvgSubjs[5])
+								.attr("r", 20)
+								.style("fill", "lightpink")
 
 	/* ideal center of non polar and not subjective */
 	svgCircles += svgContainer.append("circle")
