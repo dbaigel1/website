@@ -19,3 +19,9 @@ div.title {
   position: absolute;
   pointer-events: none;
 }
+
+div.tooltip {
+  background-color: blue;
+  height: 100px;
+  width: 100px;
+}

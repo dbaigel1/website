@@ -323,7 +323,7 @@ dataFile.then(function (data) {
 	perfData.ScaledSubj = idaelSubj;
 	perfData.numHeads = 0;
 	perfData.color = "black";
-	perfData.source = "baseline";
+	perfData.source = "target";
 
 	foxData.Pol = allAvgPols[0];
 	foxData.ScaledPol = allScaledAvgPols[0];
@@ -400,7 +400,7 @@ dataFile.then(function (data) {
 					return d.ScaledSubj
 				})
 				.attr("r", function(d){
-					if (d.source == "baseline") {
+					if (d.source == "target") {
 						return 10;
 					}
 					else
@@ -428,12 +428,13 @@ dataFile.then(function (data) {
 					var yPos = d3.mouse(this)[1] - 55;
 
 					tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
-					if (d.source == "baseline") {
+					if (d.source == "target") {
 						tooltip.select("text").text(d.source);
 
 					}
 					else
-						tooltip.select("text").text(d.source + "\n" + d.numHeads + " Headlines");
+						tooltip.select("text").text(d.source + " " + d.numHeads + " Headlines");
+					
 
 
 				})
@@ -442,7 +443,6 @@ dataFile.then(function (data) {
 			var tooltip = svgContainer.append("g")
 									  .attr("class", "tooltip")
 									  .style("display", "none");
-
 
 			tooltip.append("text")
 			.attr("x", 15)
