@@ -409,19 +409,28 @@ dataFile.then(function (data) {
 				.style("fill", function(d){
 					return d.color
 				})
+				.style("fill-opacity", .7)
+				.style("stroke", "black")
 				.on("mouseover", function(){
 					tooltip.style("display", null);
+					d3.select(this)
+					.style("fill-opacity", 1)
+					.raise();
 				})
 				.on("mouseout", function(){
 					tooltip.style("display", "none");
+					d3.select(this)
+					.style("fill-opacity", .7);
+
 				})
 				.on("mousemove", function(d){
-					var xPos = d3.mouse(this)[0] - 15;
+					var xPos = d3.mouse(this)[0] - 55;
 					var yPos = d3.mouse(this)[1] - 55;
 
 					tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
 					if (d.source == "baseline") {
 						tooltip.select("text").text(d.source);
+
 					}
 					else
 						tooltip.select("text").text(d.source + "\n" + d.numHeads + " Headlines");
@@ -434,11 +443,13 @@ dataFile.then(function (data) {
 									  .attr("class", "tooltip")
 									  .style("display", "none");
 
+
 			tooltip.append("text")
 			.attr("x", 15)
 			.attr("dy", "1.2em")
 			.style("font-size", "1.25em")
 			.attr("font-weight", "bold");
+
 
 
 

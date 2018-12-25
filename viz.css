@@ -18,5 +18,4 @@ div.title {
 .tooltip {
   position: absolute;
   pointer-events: none;
-  background-color: #ffffff;
 }
