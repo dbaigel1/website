@@ -420,7 +420,11 @@ dataFile.then(function (data) {
 					var yPos = d3.mouse(this)[1] - 55;
 
 					tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
-					tooltip.select("text").text(d.source);
+					if (d.source == "baseline") {
+						tooltip.select("text").text(d.source);
+					}
+					else
+						tooltip.select("text").text(d.source + "\n" + d.numHeads + " Headlines");
 
 
 				})
