@@ -1,4 +1,12 @@
+/*TO-DO: 
+1. add tooltips
+2. add zoom ability
+3. beautify colors
+4. add color legend
+5. add china daily & sixthTone
 
+
+*/
 
 
 /*get data*/
@@ -185,9 +193,9 @@ dataFile.then(function (data) {
 	vizData = data;
 	
 	var svgContainer = d3.select("#graph")
-	.append("svg")
-	.attr("width", containerWidth)
-	.attr("height", containerHeight)
+						 .append("svg")
+						 .attr("width", containerWidth)
+						 .attr("height", containerHeight)
 	/*.style("border", "1px solid black");*/
 
 	/* Create Axes */
@@ -294,50 +302,141 @@ dataFile.then(function (data) {
  		total = 0;
  	}
 
-	/* Append circles to graph */
-	/*Fox*/
-	var svgCircles = svgContainer.append("circle")
-								.attr("cx", allScaledAvgPols[0])
-								.attr("cy", allScaledAvgSubjs[0])
-								.attr("r", 20)
-								.style("fill", "red")
-	/*NBC*/
-	svgCircles += svgContainer.append("circle")
-								.attr("cx", allScaledAvgPols[1])
-								.attr("cy", allScaledAvgSubjs[1])
-								.attr("r", 20)
-								.style("fill", "orange")
-    /*Wash Post*/
-	svgCircles += svgContainer.append("circle")
-								.attr("cx", allScaledAvgPols[2])
-								.attr("cy", allScaledAvgSubjs[2])
-								.attr("r", 20)
-								.style("fill", "yellow")
-	/*ABC*/
-	svgCircles += svgContainer.append("circle")
-								.attr("cx", allScaledAvgPols[3])
-								.attr("cy", allScaledAvgSubjs[3])
-								.attr("r", 20)
-								.style("fill", "lightgreen")
-    /*Breitbart*/
-	svgCircles += svgContainer.append("circle")
-								.attr("cx", allScaledAvgPols[4])
-								.attr("cy", allScaledAvgSubjs[4])
-								.attr("r", 20)
-								.style("fill", "lightblue")
-    /*BuzzFeed*/
-	svgCircles += svgContainer.append("circle")
-								.attr("cx", allScaledAvgPols[5])
-								.attr("cy", allScaledAvgSubjs[5])
-								.attr("r", 20)
-								.style("fill", "lightpink")
+	/*for each news source the object should have:
+		avg polarity, avg scaled polarity, avg subj, avg scaled subj, numHeadlines, color,
+		newssource, category breakdown
+	*/ 	
 
-	/* ideal center of non polar and not subjective */
-	svgCircles += svgContainer.append("circle")
-								.attr("cx", idealPol)
-								.attr("cy", idaelSubj)
-								.attr("r", 10)
-								.style("fill", "black")
+	/*transfer to json data type*/
+	var jsonData = [];			
+	var foxData = new Object();
+	var nbcData = new Object();
+	var wpData = new Object();
+	var abcData = new Object();
+	var bbData = new Object();
+	var bfData = new Object();
+	var perfData = new Object();
+
+	perfData.Pol = 0;
+	perfData.ScaledPol = idealPol;
+	perfData.Subj = 0;
+	perfData.ScaledSubj = idaelSubj;
+	perfData.numHeads = 0;
+	perfData.color = "black";
+	perfData.source = "baseline";
+
+	foxData.Pol = allAvgPols[0];
+	foxData.ScaledPol = allScaledAvgPols[0];
+	foxData.Subj = allAvgSubjs[0];
+	foxData.ScaledSubj = allScaledAvgSubjs[0];
+	foxData.numHeads = foxNumHeads;
+	foxData.color = "red";
+	foxData.source = "Fox";
+
+	nbcData.Pol = allAvgPols[1];
+	nbcData.ScaledPol = allScaledAvgPols[1];
+	nbcData.Subj = allAvgSubjs[1];
+	nbcData.ScaledSubj = allScaledAvgSubjs[1];
+	nbcData.numHeads = nbcNumHeads;
+	nbcData.color = "orange";
+	nbcData.source = "NBC";
+
+	wpData.Pol = allAvgPols[2];
+	wpData.ScaledPol = allScaledAvgPols[2];
+	wpData.Subj = allAvgSubjs[2];
+	wpData.ScaledSubj = allScaledAvgSubjs[2];
+	wpData.numHeads = wpNumHeads;
+	wpData.color = "blue";
+	wpData.source = "WP";
+
+	abcData.Pol = allAvgPols[3];
+	abcData.ScaledPol = allScaledAvgPols[3];
+	abcData.Subj = allAvgSubjs[3];
+	abcData.ScaledSubj = allScaledAvgSubjs[3];
+	abcData.numHeads = abcNumHeads;
+	abcData.color = "green";
+	abcData.source = "ABC";
+
+	bbData.Pol = allAvgPols[4];
+	bbData.ScaledPol = allScaledAvgPols[4];
+	bbData.Subj = allAvgSubjs[4];
+	bbData.ScaledSubj = allScaledAvgSubjs[4];
+	bbData.numHeads = bbNumHeads;
+	bbData.color = "yellow";
+	bbData.source = "BB";
+
+	bfData.Pol = allAvgPols[5];
+	bfData.ScaledPol = allScaledAvgPols[5];
+	bfData.Subj = allAvgSubjs[5];
+	bfData.ScaledSubj = allScaledAvgSubjs[5];
+	bfData.numHeads = bfNumHeads;
+	bfData.color = "pink";
+	bfData.source = "BF";
+
+	//var foxString = JSON.stringify(foxData);
+	jsonData.push(foxData);
+	jsonData.push(nbcData);
+	jsonData.push(wpData);
+	jsonData.push(abcData);
+	jsonData.push(bbData);
+	jsonData.push(bfData);
+	jsonData.push(perfData);
+
+	console.log(jsonData);
+
+
+	/* add data elements */
+	svgContainer.selectAll("circle")
+				.data(jsonData)
+				.enter()
+				.append("circle")
+				.attr("cx", function(d, i) {
+				
+					return d.ScaledPol;
+					
+				})
+				.attr("cy", function(d) {
+					
+					return d.ScaledSubj
+				})
+				.attr("r", function(d){
+					if (d.source == "baseline") {
+						return 10;
+					}
+					else
+						return 20;
+				})
+				.style("fill", function(d){
+					return d.color
+				})
+				.on("mouseover", function(){
+					tooltip.style("display", null);
+				})
+				.on("mouseout", function(){
+					tooltip.style("display", "none");
+				})
+				.on("mousemove", function(d){
+					var xPos = d3.mouse(this)[0] - 15;
+					var yPos = d3.mouse(this)[1] - 55;
+
+					tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
+					tooltip.select("text").text(d.source);
+
+
+				})
+			
+			/* tooltip */
+			var tooltip = svgContainer.append("g")
+									  .attr("class", "tooltip")
+									  .style("display", "none");
+
+			tooltip.append("text")
+			.attr("x", 15)
+			.attr("dy", "1.2em")
+			.style("font-size", "1.25em")
+			.attr("font-weight", "bold");
+
+
 
 	/* axis labels*/
 	var xLabel = svgContainer.append("text")
