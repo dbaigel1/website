@@ -411,8 +411,10 @@ dataFile.then(function (data) {
 				})
 				.style("fill-opacity", .7)
 				.style("stroke", "black")
-				.on("mouseover", function(){
+				.on("mouseover", function(d){
 					tooltip.style("display", null);
+					console.log(d);
+					tooltip.style("background-color", d.color);
 					d3.select(this)
 					.style("fill-opacity", 1)
 					.raise();
@@ -424,25 +426,34 @@ dataFile.then(function (data) {
 
 				})
 				.on("mousemove", function(d){
-					var xPos = d3.mouse(this)[0] - 55;
-					var yPos = d3.mouse(this)[1] - 55;
+					var xPos = d3.mouse(this)[0];
+					var yPos = d3.mouse(this)[1];
 
-					tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
+					//tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
 					if (d.source == "target") {
 						tooltip.select("text").text(d.source);
+						/*instead of a text object try making it a p*/
 
 					}
 					else
 						tooltip.select("text").text(d.source + " " + d.numHeads + " Headlines");
+					/*TO-DO: display the actual avg pol and subj values*/
 					
-
+					d3.select('.tooltip')
+					  .style("left", xPos + "px")
+					  .style("top", yPos  + "px");
 
 				})
 			
 			/* tooltip */
-			var tooltip = svgContainer.append("g")
+			/* old tooltip -- couldn't get a background on it
+			var tooltips = svgContainer.append("g")
 									  .attr("class", "tooltip")
-									  .style("display", "none");
+									  .style("display", "none");*/
+
+			var tooltip = d3.select("body")
+  							.append("div")
+  							.attr('class', 'tooltip');
 
 			tooltip.append("text")
 			.attr("x", 15)
