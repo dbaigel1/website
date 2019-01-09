@@ -3,15 +3,12 @@
 2. add zoom ability
 3. beautify colors
 4. add color legend
-5. add china daily & sixthTone
-*6. fix data! data displayed is incorrect!
-
 
 */
 
 
 /*get data*/
-var dataFile = d3.csv("tempdata_file.csv");
+var dataFile = d3.csv("data_file.csv");
 dataFile.then(function (data) {
     
     console.log(data); 
@@ -28,7 +25,7 @@ dataFile.then(function (data) {
 	var allAvgPols = []; /* contains all avg polarity values */
 	var allAvgSubjs = []; /* contains all avg subj values */
 
-	var newsSources = ["Fox", "NBC", "Wash Post", "ABC", "Breitbart", "BuzzFeed"]; /* contains order of newssources */
+	var newsSources = ["Fox", "NBC", "Wash Post", "ABC", "Breitbart", "BuzzFeed", "China Daily", "Sixth Tone"]; /* contains order of newssources */
 	
 	/*FOX*/
 	var foxAvgPolarity = 0;
@@ -90,6 +87,27 @@ dataFile.then(function (data) {
 	var bfSubjs = [];
 	var bfCats = [];
 
+	/*CD*/
+	var cdAvgPolarity = 0;
+    var cdAvgSubj = 0;
+    var cdNumHeads = 0;
+
+	var cdHeadlines = [];
+	var cdPolarities = [];
+	var cdSubjs = [];
+	var cdCats = [];
+
+	/*ST*/
+	var stAvgPolarity = 0;
+    var stAvgSubj = 0;
+    var stNumHeads = 0;
+
+	var stHeadlines = [];
+	var stPolarities = [];
+	var stSubjs = [];
+	var stCats = [];
+
+
 	/* give variables data from file */
 	for (var i = 0; i < data.length; i++) {
 		dates[i] = data[i]["Date"];
@@ -124,19 +142,29 @@ dataFile.then(function (data) {
 		bfSubjs[i] = data[i]["BuzzFeed Subjectivity"];
 		bfCats[i] = data[i]["BuzzFeed Category"];
 
+		cdHeadlines[i] = data[i]["China Daily Headline"];
+		cdPolarities[i] = data[i]["China Daily Polarity"];
+		cdSubjs[i] = data[i]["China Daily Subjectivity"];
+		cdCats[i] = data[i]["China Daily Category"];
+
+		stHeadlines[i] = data[i]["Sixth Tone Headline"];
+		stPolarities[i] = data[i]["Sixth Tone Polarity"];
+		stSubjs[i] = data[i]["Sixth Tone Subjectivity"];
+		stCats[i] = data[i]["Sixth Tone Category"];
 	}
 	/* add data to ~all~ arrays */
 	allPolarities.push(foxPolarities, nbcPolarities, wpPolarities,
-	                   abcPolarities, bbPolarities, bfPolarities);
-	allSubjs.push(foxSubjs, nbcSubjs, wpSubjs, abcSubjs, bbSubjs, bfSubjs);
+	                   abcPolarities, bbPolarities, bfPolarities, cdPolarities, stPolarities);
+	
+	allSubjs.push(foxSubjs, nbcSubjs, wpSubjs, abcSubjs, bbSubjs, bfSubjs, cdSubjs, stSubjs);
+	
 	allAvgPols.push(foxAvgPolarity, nbcAvgPolarity, wpAvgPolarity,
-	                abcAvgPolarity, bbAvgPolarity, bfAvgPolarity);
-	allAvgSubjs.push(foxAvgSubj, nbcAvgSubj, wpAvgSubj, abcAvgSubj, bbAvgSubj, bfAvgSubj);
+	                abcAvgPolarity, bbAvgPolarity, bfAvgPolarity, 
+	                cdAvgPolarity, stAvgPolarity);
+	
+	allAvgSubjs.push(foxAvgSubj, nbcAvgSubj, wpAvgSubj, abcAvgSubj, bbAvgSubj, bfAvgSubj,
+		             cdAvgSubj, stAvgSubj);
 
-	//TESTING
-	for(var i = 0; i < bfSubjs.length; i++) {
-		console.log(bfSubjs[i]);
-	}
 
 	/* count of headlines of each news source */
 	for (var i = 0; i < data.length; i++) {
@@ -163,6 +191,14 @@ dataFile.then(function (data) {
 
 		if (bbHeadlines[i] != "") {
 			bbNumHeads++;
+		}
+
+		if (cdHeadlines[i] != "") {
+			cdNumHeads++;
+		}
+
+		if (stHeadlines[i] != "") {
+			stNumHeads++;
 		}
 	}
 
@@ -265,26 +301,42 @@ dataFile.then(function (data) {
  	var scaledBFAvgPol = 0;
  	var scaledBFAvgSubj = 0;
 
+ 	var scaledCDPols = [];
+ 	var scaledCDSubjs = [];
+ 	var scaledCDAvgPol = 0;
+ 	var scaledCDAvgSubj = 0;
+
+ 	var scaledSTPols = [];
+ 	var scaledSTSubjs = [];
+ 	var scaledSTAvgPol = 0;
+ 	var scaledSTAvgSubj = 0;
+
  	var allScaledPols = [];
  	var allScaledSubjs = [];
  	allScaledPols.push(scaledFoxPolarities, scaledNBCPolarities, scaledWPPols,
- 		               scaledABCPols, scaledBBPols, scaledBFPols);
+ 		               scaledABCPols, scaledBBPols, scaledBFPols, 
+ 		               scaledCDPols, scaledSTPols);
+
  	allScaledSubjs.push(scaledFoxSubjs, scaledNBCSubjs, scaledWPSubjs,
- 		                scaledABCSubjs, scaledBBSubjs, scaledBFSubjs);
+ 		                scaledABCSubjs, scaledBBSubjs, scaledBFSubjs, 
+ 		                scaledCDPols, scaledSTSubjs);
 
  	var allScaledAvgPols = [];
  	var allScaledAvgSubjs = [];
+
  	allScaledAvgPols.push(scaledFoxAvgPolarity, scaledNBCAvgPolarity, scaledWPAvgPol,
- 		                  scaledABCAvgPol, scaledBBAvgPol, scaledBFAvgPol);
+ 		                  scaledABCAvgPol, scaledBBAvgPol, scaledBFAvgPol,
+ 		                  scaledCDAvgPol, scaledSTAvgPol);
+
  	allScaledAvgSubjs.push(scaledFoxAvgSubj, scaledNBCAvgSubj, scaledWPAvgSubj,
- 		                   scaledABCAvgSubj, scaledBBAvgSubj, scaledBFAvgSubj);
+ 		                   scaledABCAvgSubj, scaledBBAvgSubj, scaledBFAvgSubj,
+ 		                   scaledCDAvgSubj, scaledSTAvgSubj);
 
  	var idealPol = axisScaleX(0);
  	var idaelSubj = axisScaleY(0);
 
 	total = 0;
  	
- 	/*TO-DO: test and check the avg pol and avg subj calculations (should be fixed )*/
  	/* avg scaled polarity */
  	for (var source = 0; source < allScaledPols.length; source++) {
  		var tempLength = 0;
@@ -327,6 +379,8 @@ dataFile.then(function (data) {
 	var abcData = new Object();
 	var bbData = new Object();
 	var bfData = new Object();
+	var cdData = new Object();
+	var stData = new Object();
 	var perfData = new Object(); /* target dataset */
 
 	/* rounding */
@@ -393,18 +447,34 @@ dataFile.then(function (data) {
 	bfData.color = "pink";
 	bfData.source = "BF";
 
+	cdData.Pol = allAvgPols[6];
+	cdData.ScaledPol = allScaledAvgPols[6];
+	cdData.Subj = allAvgSubjs[6];
+	cdData.ScaledSubj = allScaledAvgSubjs[6];
+	cdData.numHeads = cdNumHeads;
+	cdData.color = "maroon";
+	cdData.source = "CD";
+
+	stData.Pol = allAvgPols[6];
+	stData.ScaledPol = allScaledAvgPols[6];
+	stData.Subj = allAvgSubjs[6];
+	stData.ScaledSubj = allScaledAvgSubjs[6];
+	stData.numHeads = stNumHeads;
+	stData.color = "blueViolet";
+	stData.source = "ST";
+
 	jsonData.push(foxData);
 	jsonData.push(nbcData);
 	jsonData.push(wpData);
 	jsonData.push(abcData);
 	jsonData.push(bbData);
 	jsonData.push(bfData);
+	jsonData.push(cdData);
+	jsonData.push(stData);
 	jsonData.push(perfData);
 
+
 	console.log(jsonData);
-	/*TO-DO: there is an issue with the subjectivity calculation, seems like
-	the order of the news sources is getting reversed somewhere? check the push 
-	function to make sure it appends and not prepends*/
 
 	/* add data elements */
 	svgContainer.selectAll("circle")
@@ -447,22 +517,23 @@ dataFile.then(function (data) {
 
 				})
 				.on("mousemove", function(d){
-					var xPos = d3.mouse(this)[0];
-					var yPos = d3.mouse(this)[1] + 200;
+					/*var xPos = d3.mouse(this)[0];
+					var yPos = d3.mouse(this)[1] + 200;*/
+					var xPos = 100;
+					var yPos = 100;
 
 					//tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
 					if (d.source == "target") {
 						tooltip.select("p").text(d.source);
 						tooltip.style("background-color", "gray")
 								.style("width", 60+"px")
-								.style("height", 10+"px")
+								.style("height", 60+"px")
 								.style("text-align", "center");
-						/*instead of a text object try making it a p*/
-
+					
 					}
 					else {
 						tooltip.select("p").text(d.source + " " 
-							+ d.numHeads + " Headlines" 
+							+ "Headlines: " + d.numHeads  
 							+ " Polarity: " + d.Pol + 
 							" Subjectivity: " + d.Subj);
 
@@ -473,8 +544,10 @@ dataFile.then(function (data) {
 					}
 
 					/*TO-DO: format tooltip to be one size and text on each line nicely 
-					  and color change based on background color*/
+					  */
 					
+					/*TO-DO: format tooltip and entire chart to be responsive to changes in 
+					window size */
 					d3.select('.tooltip')
 					  .style("left", xPos + "px")
 					  .style("top", yPos  + "px");
