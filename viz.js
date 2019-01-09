@@ -532,7 +532,7 @@ dataFile.then(function (data) {
 					
 					}
 					else {
-						tooltip.select("p").text(d.source + " " 
+						tooltip.select("p").html(d.source + "<br>" 
 							+ "Headlines: " + d.numHeads  
 							+ " Polarity: " + d.Pol + 
 							" Subjectivity: " + d.Subj);
@@ -543,8 +543,6 @@ dataFile.then(function (data) {
 								.style("text-align", "left");
 					}
 
-					/*TO-DO: format tooltip to be one size and text on each line nicely 
-					  */
 					
 					/*TO-DO: format tooltip and entire chart to be responsive to changes in 
 					window size */
