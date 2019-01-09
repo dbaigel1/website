@@ -4,6 +4,7 @@
 3. beautify colors
 4. add color legend
 5. add china daily & sixthTone
+*6. fix data! data displayed is incorrect!
 
 
 */
@@ -132,6 +133,11 @@ dataFile.then(function (data) {
 	                abcAvgPolarity, bbAvgPolarity, bfAvgPolarity);
 	allAvgSubjs.push(foxAvgSubj, nbcAvgSubj, wpAvgSubj, abcAvgSubj, bbAvgSubj, bfAvgSubj);
 
+	//TESTING
+	for(var i = 0; i < bfSubjs.length; i++) {
+		console.log(bfSubjs[i]);
+	}
+
 	/* count of headlines of each news source */
 	for (var i = 0; i < data.length; i++) {
 		
@@ -161,18 +167,20 @@ dataFile.then(function (data) {
 	}
 
 	var total = 0;
-
+	var numElems = 0;
 	/* polarity */
 	for (var source = 0; source < allPolarities.length; source++) {
 		
 		for (var j = 0; j < allPolarities[source].length; j++) {
 			if(allPolarities[source][j] != ""){
 				total += parseFloat(allPolarities[source][j]);
+				numElems++;
 			}
 		}
 
-		allAvgPols[source] = total / allPolarities[source].length;
+		allAvgPols[source] = total / numElems;
 		total = 0;
+		numElems = 0;
 	}
 
 	/* subjectivity */
@@ -181,11 +189,15 @@ dataFile.then(function (data) {
 		for (var j = 0; j < allSubjs[source].length; j++) {
 			if (allSubjs[source][j] != ""){
 				total += parseFloat(allSubjs[source][j]);
+				numElems++;
 			}
 		}
 
-		allAvgSubjs[source] = total / allSubjs[source].length;
+		allAvgSubjs[source] = total / numElems;
+		
+			
 		total = 0;
+		numElems = 0;
 	}
 
 	/* Do D3 stuff */
@@ -315,7 +327,15 @@ dataFile.then(function (data) {
 	var abcData = new Object();
 	var bbData = new Object();
 	var bfData = new Object();
-	var perfData = new Object();
+	var perfData = new Object(); /* target dataset */
+
+	/* rounding */
+	for (var i = 0; i < allAvgPols.length; i++) {
+		//console.log(allAvgSubjs[i]);
+		allAvgPols[i] = Number(allAvgPols[i].toFixed(2));
+		allAvgSubjs[i] = Number(allAvgSubjs[i].toFixed(2));  
+	}
+	
 
 	perfData.Pol = 0;
 	perfData.ScaledPol = idealPol;
@@ -346,7 +366,7 @@ dataFile.then(function (data) {
 	wpData.Subj = allAvgSubjs[2];
 	wpData.ScaledSubj = allScaledAvgSubjs[2];
 	wpData.numHeads = wpNumHeads;
-	wpData.color = "blue";
+	wpData.color = "lightblue";
 	wpData.source = "WP";
 
 	abcData.Pol = allAvgPols[3];
@@ -373,7 +393,6 @@ dataFile.then(function (data) {
 	bfData.color = "pink";
 	bfData.source = "BF";
 
-	//var foxString = JSON.stringify(foxData);
 	jsonData.push(foxData);
 	jsonData.push(nbcData);
 	jsonData.push(wpData);
@@ -383,7 +402,9 @@ dataFile.then(function (data) {
 	jsonData.push(perfData);
 
 	console.log(jsonData);
-
+	/*TO-DO: there is an issue with the subjectivity calculation, seems like
+	the order of the news sources is getting reversed somewhere? check the push 
+	function to make sure it appends and not prepends*/
 
 	/* add data elements */
 	svgContainer.selectAll("circle")
@@ -413,8 +434,8 @@ dataFile.then(function (data) {
 				.style("stroke", "black")
 				.on("mouseover", function(d){
 					tooltip.style("display", null);
-					console.log(d);
 					tooltip.style("background-color", d.color);
+
 					d3.select(this)
 					.style("fill-opacity", 1)
 					.raise();
@@ -427,17 +448,32 @@ dataFile.then(function (data) {
 				})
 				.on("mousemove", function(d){
 					var xPos = d3.mouse(this)[0];
-					var yPos = d3.mouse(this)[1];
+					var yPos = d3.mouse(this)[1] + 200;
 
 					//tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
 					if (d.source == "target") {
-						tooltip.select("text").text(d.source);
+						tooltip.select("p").text(d.source);
+						tooltip.style("background-color", "gray")
+								.style("width", 60+"px")
+								.style("height", 10+"px")
+								.style("text-align", "center");
 						/*instead of a text object try making it a p*/
 
 					}
-					else
-						tooltip.select("text").text(d.source + " " + d.numHeads + " Headlines");
-					/*TO-DO: display the actual avg pol and subj values*/
+					else {
+						tooltip.select("p").text(d.source + " " 
+							+ d.numHeads + " Headlines" 
+							+ " Polarity: " + d.Pol + 
+							" Subjectivity: " + d.Subj);
+
+						tooltip.style("background-color", d.color)
+								.style("width", 170+"px")
+								.style("height", 120+"px")
+								.style("text-align", "left");
+					}
+
+					/*TO-DO: format tooltip to be one size and text on each line nicely 
+					  and color change based on background color*/
 					
 					d3.select('.tooltip')
 					  .style("left", xPos + "px")
@@ -455,9 +491,9 @@ dataFile.then(function (data) {
   							.append("div")
   							.attr('class', 'tooltip');
 
-			tooltip.append("text")
-			.attr("x", 15)
-			.attr("dy", "1.2em")
+			tooltip.append("p")
+			//.attr("x", 15)
+			//.attr("dy", "1.2em")
 			.style("font-size", "1.25em")
 			.attr("font-weight", "bold");
 
