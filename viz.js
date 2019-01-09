@@ -421,7 +421,7 @@ dataFile.then(function (data) {
 	wpData.ScaledSubj = allScaledAvgSubjs[2];
 	wpData.numHeads = wpNumHeads;
 	wpData.color = "lightblue";
-	wpData.source = "WP";
+	wpData.source = "Washington Post";
 
 	abcData.Pol = allAvgPols[3];
 	abcData.ScaledPol = allScaledAvgPols[3];
@@ -437,7 +437,7 @@ dataFile.then(function (data) {
 	bbData.ScaledSubj = allScaledAvgSubjs[4];
 	bbData.numHeads = bbNumHeads;
 	bbData.color = "yellow";
-	bbData.source = "BB";
+	bbData.source = "Breitbart";
 
 	bfData.Pol = allAvgPols[5];
 	bfData.ScaledPol = allScaledAvgPols[5];
@@ -445,7 +445,7 @@ dataFile.then(function (data) {
 	bfData.ScaledSubj = allScaledAvgSubjs[5];
 	bfData.numHeads = bfNumHeads;
 	bfData.color = "pink";
-	bfData.source = "BF";
+	bfData.source = "BuzzFeed";
 
 	cdData.Pol = allAvgPols[6];
 	cdData.ScaledPol = allScaledAvgPols[6];
@@ -453,7 +453,7 @@ dataFile.then(function (data) {
 	cdData.ScaledSubj = allScaledAvgSubjs[6];
 	cdData.numHeads = cdNumHeads;
 	cdData.color = "maroon";
-	cdData.source = "CD";
+	cdData.source = "China Daily";
 
 	stData.Pol = allAvgPols[6];
 	stData.ScaledPol = allScaledAvgPols[6];
@@ -461,7 +461,7 @@ dataFile.then(function (data) {
 	stData.ScaledSubj = allScaledAvgSubjs[6];
 	stData.numHeads = stNumHeads;
 	stData.color = "blueViolet";
-	stData.source = "ST";
+	stData.source = "Sixth Tone";
 
 	jsonData.push(foxData);
 	jsonData.push(nbcData);
@@ -553,10 +553,6 @@ dataFile.then(function (data) {
 				})
 			
 			/* tooltip */
-			/* old tooltip -- couldn't get a background on it
-			var tooltips = svgContainer.append("g")
-									  .attr("class", "tooltip")
-									  .style("display", "none");*/
 
 			var tooltip = d3.select("body")
   							.append("div")
