@@ -11,6 +11,13 @@
 var dataFile = d3.csv("data_file.csv");
 dataFile.then(function (data) {
     
+    /*gets rid of blank rows*/
+    for(var i = 0; i < data.length; i++) {
+    	if(data[i]["Date"] == "") {
+    		data.splice(i, 1);
+    		i--;
+    	}
+    }
     console.log(data); 
 
     var containerWidth = 1000;
@@ -110,6 +117,7 @@ dataFile.then(function (data) {
 
 	/* give variables data from file */
 	for (var i = 0; i < data.length; i++) {
+		
 		dates[i] = data[i]["Date"];
 
 		foxHeadlines[i] = data[i]["Fox Headline"];
@@ -151,7 +159,9 @@ dataFile.then(function (data) {
 		stPolarities[i] = data[i]["Sixth Tone Polarity"];
 		stSubjs[i] = data[i]["Sixth Tone Subjectivity"];
 		stCats[i] = data[i]["Sixth Tone Category"];
+		
 	}
+	
 	/* add data to ~all~ arrays */
 	allPolarities.push(foxPolarities, nbcPolarities, wpPolarities,
 	                   abcPolarities, bbPolarities, bfPolarities, cdPolarities, stPolarities);
@@ -455,10 +465,10 @@ dataFile.then(function (data) {
 	cdData.color = "maroon";
 	cdData.source = "China Daily";
 
-	stData.Pol = allAvgPols[6];
-	stData.ScaledPol = allScaledAvgPols[6];
-	stData.Subj = allAvgSubjs[6];
-	stData.ScaledSubj = allScaledAvgSubjs[6];
+	stData.Pol = allAvgPols[7];
+	stData.ScaledPol = allScaledAvgPols[7];
+	stData.Subj = allAvgSubjs[7];
+	stData.ScaledSubj = allScaledAvgSubjs[7];
 	stData.numHeads = stNumHeads;
 	stData.color = "blueViolet";
 	stData.source = "Sixth Tone";
