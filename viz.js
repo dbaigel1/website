@@ -1,9 +1,15 @@
 /*TO-DO: 
+graph1
 1. add tooltips
 2. add zoom ability
 3. beautify colors
 4. add color legend
 
+
+graph2
+a bar graph that breaks out news source by category
+0. refine category AI (ongoing)
+1.set up the board
 */
 
 
@@ -114,7 +120,7 @@ dataFile.then(function (data) {
 	var stSubjs = [];
 	var stCats = [];
 
-
+	var totalNumHeads = 0; /*num total headlines*/
 	/* give variables data from file */
 	for (var i = 0; i < data.length; i++) {
 		
@@ -210,7 +216,10 @@ dataFile.then(function (data) {
 		if (stHeadlines[i] != "") {
 			stNumHeads++;
 		}
+
 	}
+	totalNumHeads = foxNumHeads + nbcNumHeads + wpNumHeads + bbNumHeads + abcNumHeads
+	+ bfNumHeads + cdNumHeads + stNumHeads
 
 	var total = 0;
 	var numElems = 0;
@@ -246,11 +255,13 @@ dataFile.then(function (data) {
 		numElems = 0;
 	}
 
-	/* Do D3 stuff */
-	/*TO-DO: rearrange y-axis to be 0 to 1*/
+	/* Graphs */
+
 	vizData = data;
 	
-	var svgContainer = d3.select("#graph")
+	/*Graph 1*/
+
+	var graph1 = d3.select("#graph1")
 						 .append("svg")
 						 .attr("width", containerWidth)
 						 .attr("height", containerHeight)
@@ -263,19 +274,19 @@ dataFile.then(function (data) {
 
 	var xAxis = d3.axisTop()
                       .scale(axisScaleX);
-
-    var xAxisGroup = svgContainer.append("g")
+ 
+    var xAxisGroup = graph1.append("g")
     .attr("transform", `translate(0, ${containerHeight-30})`)
     .call(xAxis);
 
     var axisScaleY = d3.scaleLinear()
-    					.domain([0,1])
+    					.domain([1,0])
     					.range([50,containerHeight-60]);
 
     var yAxis = d3.axisRight()
     				.scale(axisScaleY);
 
-    var yAxisGroup = svgContainer.append("g")
+    var yAxisGroup = graph1.append("g")
     .attr("transform", "translate(30, 0)")
     .call(yAxis);
 	
@@ -323,6 +334,7 @@ dataFile.then(function (data) {
 
  	var allScaledPols = [];
  	var allScaledSubjs = [];
+
  	allScaledPols.push(scaledFoxPolarities, scaledNBCPolarities, scaledWPPols,
  		               scaledABCPols, scaledBBPols, scaledBFPols, 
  		               scaledCDPols, scaledSTPols);
@@ -487,7 +499,7 @@ dataFile.then(function (data) {
 	console.log(jsonData);
 
 	/* add data elements */
-	svgContainer.selectAll("circle")
+	graph1.selectAll("circle")
 				.data(jsonData)
 				.enter()
 				.append("circle")
@@ -578,20 +590,50 @@ dataFile.then(function (data) {
 
 
 	/* axis labels*/
-	var xLabel = svgContainer.append("text")
+	var xLabel = graph1.append("text")
 						     .attr("text-anchor", "middle")
 						     .attr("x", containerWidth/2)
 						     .attr("y", containerHeight-10)
 						     .style("font-size", "20px")
 						     .text("Polarity");
 
-	var yLabel = svgContainer.append("text")
+	var yLabel = graph1.append("text")
 							.attr("text-anchor", "middle")
 						    .attr("y", 15)
 						    .attr("x", -containerHeight/2)	
 						    .attr("transform", "rotate(-90)")
 						    .style("font-size", "20px")
 						    .text("Subjectivity");
+
+	/* Graph 2 */
+	var graph2 = d3.select("#graph2")
+						 .append("svg")
+						 .attr("width", containerWidth)
+						 .attr("height", containerHeight)
+	/*.style("border", "1px solid black");*/
+
+	/* Create Axes */
+	var axisScaleX2 = d3.scaleLinear()
+                         .domain([-1,1])
+                         .range([50,containerWidth-50]);
+
+	var xAxis2 = d3.axisTop()
+                      .scale(axisScaleX2);
+ 
+    var xAxisGroup2 = graph2.append("g")
+    .attr("transform", `translate(0, ${containerHeight-30})`)
+    .call(xAxis2);
+
+    var axisScaleY2 = d3.scaleLinear()
+    					.domain([totalNumHeads, 0])
+    					.range([50,containerHeight-60]);
+
+    var yAxis2 = d3.axisRight()
+    				.scale(axisScaleY2);
+
+    var yAxisGroup2 = graph2.append("g")
+    .attr("transform", "translate(30, 0)")
+    .call(yAxis2);
 
 }, function (error) {
     console.error('file loading error: ', error);
