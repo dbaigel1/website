@@ -1,18 +1,21 @@
 /*TO-DO: 
+1. add descriptions for graphs above each graph
+
 graph1
 1. fix and beautify tooltips
 4. add color legend
-3. zoom (make axes change based on .1 past the max value for pol and subj)
+3. zoom (make axes change based on .1 past the MAX value for pol and subj)
 
 
 graph2
 a bar graph that breaks out news source by category
 0. refine category AI (ongoing)
-1.set up the board
+1. set up the board
 2. create data - count each category within a givin news source
 	each news source data should have count of headlines for each category and total,
 	as well as color and source, and then maybe a percentage (e.g. 50% of wp headlines are Politics)
-	
+3. create the bars - look up how to do this
+4. group the bars by news source - look up how to do this (maybe do stacked bars)
 */
 
 
@@ -271,8 +274,29 @@ dataFile.then(function (data) {
 	/*.style("border", "1px solid black");*/
 
 	/* Create Axes */
+	
+	/*get min and max values for scales*/
+	var mostMinP = 0;
+	var mostMaxP = 0;
+	for (var i = 0; i < allAvgPols.length; i++) {
+		if (parseFloat(allAvgPols[i]) > mostMaxP) {
+			mostMaxP = parseFloat(allAvgPols[i]);
+		}
+		else if (parseFloat(allAvgPols[i]) < mostMinP) {
+			mostMinP = parseFloat(allAvgPols[i]);
+		}
+	}
+
+	var mostMaxS = 0;
+	for (var i = 0; i < allAvgSubjs.length; i++) {
+		if (parseFloat(allAvgSubjs[i]) > mostMaxS) {
+			mostMaxS = parseFloat(allAvgSubjs[i]);
+		}
+	}
+
+
 	var axisScaleX = d3.scaleLinear()
-                         .domain([-1,1])
+                         .domain([mostMinP-0.1,mostMaxP +0.1]) /*max domain -1 to 1*/
                          .range([50,containerWidth-50]);
 
 	var xAxis = d3.axisTop()
@@ -283,7 +307,7 @@ dataFile.then(function (data) {
     .call(xAxis);
 
     var axisScaleY = d3.scaleLinear()
-    					.domain([1,0])
+    					.domain([mostMaxS +0.1,0])
     					.range([50,containerHeight-60]);
 
     var yAxis = d3.axisRight()
@@ -608,6 +632,8 @@ dataFile.then(function (data) {
 						    .style("font-size", "20px")
 						    .text("Subjectivity");
 
+/******************************************************************/
+
 	/* Graph 2 */
 	var graph2 = d3.select("#graph2")
 						 .append("svg")
@@ -644,7 +670,7 @@ dataFile.then(function (data) {
 						     .attr("x", containerWidth/2)
 						     .attr("y", containerHeight-10)
 						     .style("font-size", "20px")
-						     .text("News Sources");
+						     .text("News Category");
 
 	var yLabel2 = graph2.append("text")
 							.attr("text-anchor", "middle")
@@ -1003,6 +1029,8 @@ dataFile.then(function (data) {
 	jsonData2.push(stData2);
 
 	console.log(jsonData2);
+
+	/*create visualization!*/
 
 
 }, function (error) {
