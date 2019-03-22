@@ -43,8 +43,8 @@ dataFile.then(function (data) {
 	var allAvgPols = []; /* contains all avg polarity values */
 	var allAvgSubjs = []; /* contains all avg subj values */
 
-	var newsSources = ["Fox", "NBC", "Wash Post", "ABC", "Breitbart", "BuzzFeed", "China Daily", "Sixth Tone"]; /* contains order of newssources */
-	
+	var newsSources = ["Fox", "NBC", "Wash Post", "ABC", "Breitbart", "BuzzFeed", "China Daily", "Sixth Tone", "Target"]; /* contains order of newssources */
+	var colors = ["#FF0000", "#FFA500", "#ADD8E6", "#008000", "#FFFF00", "#FFC0CB", "#800000", "#8A2BE2", "#000000"];
 	/*Fox*/
 	var foxAvgPolarity = 0;
     var foxAvgSubj = 0;
@@ -524,6 +524,11 @@ dataFile.then(function (data) {
 
 	console.log(jsonData);
 
+	/*color legend*/
+	var colorScale = d3.scaleBand()
+    					.domain(newsSources)
+    					.range(colors);
+
 	/* add data elements */
 	graph1.selectAll("circle")
 				.data(jsonData)
@@ -548,20 +553,33 @@ dataFile.then(function (data) {
 				.style("fill", function(d){
 					return d.color
 				})
-				.style("fill-opacity", .7)
+				.style("fill-opacity", .5)
 				.style("stroke", "black")
-				.on("mouseover", function(d){
+				.attr("class", function(d, i) {  
+  					
+  					return "test" + i; //+ colorScale.domain()[i];
+
+				})
+				.on("mouseover", function(d, i){
 					tooltip.style("display", null);
 					tooltip.style("background-color", d.color);
 
-					d3.select(this)
-					.style("fill-opacity", 1)
-					.raise();
+					graph1.selectAll(".test" + i).style("fill-opacity", 1);//".news source " + colorScale.domain()[i]).style("fill-opacity", 0.7);
+
+					console.log(graph1.selectAll(".test" + i).size());//"." + "news source " + colorScale.domain()[i]).style("fill-opacity", 1).size());
+
+
+				
 				})
-				.on("mouseout", function(){
+				.on("mouseout", function(d, i){
+					
 					tooltip.style("display", "none");
 					d3.select(this)
-					.style("fill-opacity", .7);
+					.style("fill-opacity", .5);
+
+					graph1.selectAll(".test" + i).style("fill-opacity", .5);//".news source " + colorScale.domain()[i]).style("fill-opacity", 0.7);
+
+		
 
 				})
 				.on("mousemove", function(d){
@@ -600,20 +618,84 @@ dataFile.then(function (data) {
 
 				})
 			
-			/* tooltip */
+	/* tooltip */
 
-			var tooltip = d3.select("body")
-  							.append("div")
-  							.attr('class', 'tooltip');
+	var tooltip = d3.select("body")
+						.append("div")
+						.attr('class', 'tooltip');
 
-			tooltip.append("p")
-			//.attr("x", 15)
-			//.attr("dy", "1.2em")
-			.style("font-size", "1.25em")
-			.attr("font-weight", "bold");
+	tooltip.append("p")
+	//.attr("x", 15)
+	//.attr("dy", "1.2em")
+	.style("font-size", "1.25em")
+	.attr("font-weight", "bold");
+
+	
+	/* color legend */		
+	
+
+    var legend = d3.select('svg')
+				    .append("g")
+				    .selectAll("g")
+				    .data(colorScale.domain())
+				    .enter()
+				    .append('g')
+				      .attr('class', 'legend')
+				      .attr('transform', function(d, i) {
+				        var height = containerHeight/9 - 10;
+				        var x = containerWidth-200;
+				        var y = i * height;
+				        return 'translate(' + x + ',' + y + ')';
+				    })
+				    .style("fill-opacity", .5)
+				    .attr("class", function(d, i) {  
+  						return "test" + i;//colorScale.domain()[i];
+
+					})
+				    
+				    .on("mouseover", function(d, i){
+					
+				    	graph1.selectAll(".test" + i).style("fill-opacity", 1); //+ colorScale.domain()[i]).style("fill-opacity", 1);
+
+						d3.select(this)
+						.style("fill-opacity", 1)
+						.raise();
+
+						console.log(graph1.selectAll(".test" + i).style("fill-opacity", 1).size());//+ colorScale.domain()[i]).style("fill-opacity", 1).size());
+
+						//TO-DO: fix test to an actual name for class
 
 
+				
+					})
+					
+					.on("mouseout", function(d, i){
+						
+						d3.select(this)
+						.style("fill-opacity", .5)
+						.raise();
+						
+				    	graph1.selectAll(".test" + i).style("fill-opacity", .5); //+ colorScale.domain()[i]).style("fill-opacity", 1);
+				    	console.log(graph1.selectAll(".test" + i).style("fill-opacity", .5).size());
 
+					});
+
+
+	legend.append('rect')
+	    .attr('width', 50)
+	    .attr('height', containerHeight/9 -10)
+	    .style('fill', function(d, i)
+	    	{
+	    		return colors[i];
+	    	});
+	    
+	       
+
+	legend.append('text')
+	    .attr('x', 60)
+	    .attr('y', 30)
+	    .text(function(d) { return d; })
+	    .style('font-size', '20px');
 
 	/* axis labels*/
 	var xLabel = graph1.append("text")
