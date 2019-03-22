@@ -27,3 +27,14 @@ div.title {
 	font-weight: bold;
 	color: black;
 }
+
+p {
+	font-size: 25px;
+	text-align: center;
+}
+
+p#intro {
+	font-size: 30px;
+	text-align: center;
+}
+

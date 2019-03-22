@@ -4,13 +4,12 @@
 graph1
 1. fix and beautify tooltips
 4. add color legend
-3. zoom (make axes change based on .1 past the MAX value for pol and subj)
+2. make whole thing responsive
 
 
 graph2
 a bar graph that breaks out news source by category
 0. refine category AI (ongoing)
-1. set up the board
 2. create data - count each category within a givin news source
 	each news source data should have count of headlines for each category and total,
 	as well as color and source, and then maybe a percentage (e.g. 50% of wp headlines are Politics)
@@ -634,404 +633,429 @@ dataFile.then(function (data) {
 
 /******************************************************************/
 
-	/* Graph 2 */
-	var graph2 = d3.select("#graph2")
-						 .append("svg")
-						 .attr("width", containerWidth)
-						 .attr("height", containerHeight)
-	/*.style("border", "1px solid black");*/
+	// /* Graph 2 */
+	// var graph2 = d3.select("#graph2")
+	// 					 .append("svg")
+	// 					 .attr("width", containerWidth)
+	// 					 .attr("height", containerHeight)
+	// /*.style("border", "1px solid black");*/
 
-	/* Create Axes */
-	var axisScaleX2 = d3.scaleLinear()
-                         .domain([-1,1])
-                         .range([50,containerWidth-50]);
+	// /* Create Axes */
+	// var axisScaleX2 = d3.scaleBand()
+ //                        .domain(newsSources) //.domain([-1,1]) /*TO-DO: change domain to array of category names*/
+ //                         .range([50,containerWidth-50]);
 
-	var xAxis2 = d3.axisTop()
-                      .scale(axisScaleX2);
+	// var xAxis2 = d3.axisTop()
+ //                   .scale(axisScaleX2);
  
-    var xAxisGroup2 = graph2.append("g")
-    .attr("transform", `translate(0, ${containerHeight-30})`)
-    .call(xAxis2);
+ //    var xAxisGroup2 = graph2.append("g")
+ //    						.attr("transform", `translate(0, ${containerHeight-30})`)
+ //    						.call(xAxis2);
 
-    var axisScaleY2 = d3.scaleLinear()
-    					.domain([totalNumHeads, 0])
-    					.range([50,containerHeight-60]);
+ //    var axisScaleY2 = d3.scaleLinear()
+ //    					.domain([totalNumHeads, 0])
+ //    					.range([50,containerHeight-60]);
 
-    var yAxis2 = d3.axisRight()
-    				.scale(axisScaleY2);
+ //    var yAxis2 = d3.axisRight()
+ //    				.scale(axisScaleY2);
 
-    var yAxisGroup2 = graph2.append("g")
-    .attr("transform", "translate(30, 0)")
-    .call(yAxis2);
+ //    var yAxisGroup2 = graph2.append("g")
+ //    .attr("transform", "translate(30, 0)")
+ //    .call(yAxis2);
 
-    /* axis labels */
-	var xLabel2 = graph2.append("text")
-						     .attr("text-anchor", "middle")
-						     .attr("x", containerWidth/2)
-						     .attr("y", containerHeight-10)
-						     .style("font-size", "20px")
-						     .text("News Category");
+ //    /* axis labels */
+	// var xLabel2 = graph2.append("text")
+	// 					     .attr("text-anchor", "middle")
+	// 					     .attr("x", containerWidth/2)
+	// 					     .attr("y", containerHeight-10)
+	// 					     .style("font-size", "20px")
+	// 					     .text("News Source");
 
-	var yLabel2 = graph2.append("text")
-							.attr("text-anchor", "middle")
-						    .attr("y", 15)
-						    .attr("x", -containerHeight/2)	
-						    .attr("transform", "rotate(-90)")
-						    .style("font-size", "20px")
-						    .text("Number of Headlines");
+	// var yLabel2 = graph2.append("text")
+	// 						.attr("text-anchor", "middle")
+	// 					    .attr("y", 15)
+	// 					    .attr("x", -containerHeight/2)	
+	// 					    .attr("transform", "rotate(-90)")
+	// 					    .style("font-size", "20px")
+	// 					    .text("Number of Headlines");
 
-	/* make data */
-	var jsonData2 = [];			
-	var wpData2 = new Object();
-	var nbcData2 = new Object();
-	var wpData2 = new Object();
-	var abcData2 = new Object();
-	var bbData2 = new Object();
-	var bfData2 = new Object();
-	var cdData2 = new Object();
-	var stData2 = new Object();
+	// /* make data */
+	// var jsonData2 = [];			
+	// var wpData2 = new Object();
+	// var nbcData2 = new Object();
+	// var wpData2 = new Object();
+	// var abcData2 = new Object();
+	// var bbData2 = new Object();
+	// var bfData2 = new Object();
+	// var cdData2 = new Object();
+	// var stData2 = new Object();
 
-	var numHeadsPolitics = 0;
-	var numHeadsTech = 0;
-	var numHeadsSports = 0;
-	var numHeadsEnv = 0;
-	var numHeadsInternational = 0;
-	var numHeadsMisc = 0;
+	// var numHeadsPolitics = 0;
+	// var numHeadsTech = 0;
+	// var numHeadsSports = 0;
+	// var numHeadsEnv = 0;
+	// var numHeadsInternational = 0;
+	// var numHeadsMisc = 0;
 	
-	/*wp*/
-	for (var i = 0; i < wpCats.length; i++) {
-		if (wpCats[i] == "politics") {
-			numHeadsPolitics++;
-		}
-		else if (wpCats[i] == "sports") {
-			numHeadsSports++;
-		}
-		else if (wpCats[i] == "technology") {
-			numHeadsTech++;
-		}
-		else if (wpCats[i] == "environment") {
-			numHeadsEnv++;
-		}
-		else if (wpCats[i] == "international") {
-			numHeadsInternational++;
-		}
-		else if (wpCats[i] == "miscellaneous") {
-			numHeadsMisc++;
-		}
-		/*add data to wp json data unit*/
-		wpData2.numHeads = wpNumHeads;
-		wpData2.color = "red";
-		wpData2.source = "wp";
-		wpData2.politics = numHeadsPolitics;
-		wpData2.tech = numHeadsTech;
-		wpData2.sports = numHeadsSports;
-		wpData2.env = numHeadsEnv;
-		wpData2.int = numHeadsInternational;
-	 	wpData2.misc = numHeadsMisc;
+	// /*wp*/
+	// for (var i = 0; i < wpCats.length; i++) {
+	// 	if (wpCats[i] == "politics") {
+	// 		numHeadsPolitics++;
+	// 	}
+	// 	else if (wpCats[i] == "sports") {
+	// 		numHeadsSports++;
+	// 	}
+	// 	else if (wpCats[i] == "technology") {
+	// 		numHeadsTech++;
+	// 	}
+	// 	else if (wpCats[i] == "environment") {
+	// 		numHeadsEnv++;
+	// 	}
+	// 	else if (wpCats[i] == "international") {
+	// 		numHeadsInternational++;
+	// 	}
+	// 	else if (wpCats[i] == "miscellaneous") {
+	// 		numHeadsMisc++;
+	// 	}
+	// 	/*add data to wp json data unit*/
+	// 	wpData2.numHeads = wpNumHeads;
+	// 	wpData2.color = "red";
+	// 	wpData2.source = "wp";
+	// 	wpData2.politics = numHeadsPolitics;
+	// 	wpData2.tech = numHeadsTech;
+	// 	wpData2.sports = numHeadsSports;
+	// 	wpData2.env = numHeadsEnv;
+	// 	wpData2.int = numHeadsInternational;
+	//  	wpData2.misc = numHeadsMisc;
 
-	 	numHeadsPolitics = 0;
-		numHeadsTech = 0;
-		numHeadsSports = 0;
-		numHeadsEnv = 0;
-		numHeadsInternational = 0;
-		numHeadsMisc = 0;
+	//  	numHeadsPolitics = 0;
+	// 	numHeadsTech = 0;
+	// 	numHeadsSports = 0;
+	// 	numHeadsEnv = 0;
+	// 	numHeadsInternational = 0;
+	// 	numHeadsMisc = 0;
 
-	}
+	// }
 
-	/*NBC*/
-	for (var i = 0; i < nbcCats.length; i++) {
-		if (nbcCats[i] == "politics") {
-			numHeadsPolitics++;
-		}
-		else if (nbcCats[i] == "sports") {
-			numHeadsSports++;
-		}
-		else if (nbcCats[i] == "technology") {
-			numHeadsTech++;
-		}
-		else if (nbcCats[i] == "environment") {
-			numHeadsEnv++;
-		}
-		else if (nbcCats[i] == "international") {
-			numHeadsInternational++;
-		}
-		else if (nbcCats[i] == "miscellaneous") {
-			numHeadsMisc++;
-		}
-		/*add data to nbc json data unit*/
-		nbcData2.numHeads = nbcNumHeads;
-		nbcData2.color = "orange";
-		nbcData2.source = "NBC";
-		nbcData2.politics = numHeadsPolitics;
-		nbcData2.tech = numHeadsTech;
-		nbcData2.sports = numHeadsSports;
-		nbcData2.env = numHeadsEnv;
-		nbcData2.int = numHeadsInternational;
-	 	nbcData2.misc = numHeadsMisc;
+	// /*NBC*/
+	// for (var i = 0; i < nbcCats.length; i++) {
+	// 	if (nbcCats[i] == "politics") {
+	// 		numHeadsPolitics++;
+	// 	}
+	// 	else if (nbcCats[i] == "sports") {
+	// 		numHeadsSports++;
+	// 	}
+	// 	else if (nbcCats[i] == "technology") {
+	// 		numHeadsTech++;
+	// 	}
+	// 	else if (nbcCats[i] == "environment") {
+	// 		numHeadsEnv++;
+	// 	}
+	// 	else if (nbcCats[i] == "international") {
+	// 		numHeadsInternational++;
+	// 	}
+	// 	else if (nbcCats[i] == "miscellaneous") {
+	// 		numHeadsMisc++;
+	// 	}
+	// 	/*add data to nbc json data unit*/
+	// 	nbcData2.numHeads = nbcNumHeads;
+	// 	nbcData2.color = "orange";
+	// 	nbcData2.source = "NBC";
+	// 	nbcData2.politics = numHeadsPolitics;
+	// 	nbcData2.tech = numHeadsTech;
+	// 	nbcData2.sports = numHeadsSports;
+	// 	nbcData2.env = numHeadsEnv;
+	// 	nbcData2.int = numHeadsInternational;
+	//  	nbcData2.misc = numHeadsMisc;
 
-	 	numHeadsPolitics = 0;
-		numHeadsTech = 0;
-		numHeadsSports = 0;
-		numHeadsEnv = 0;
-		numHeadsInternational = 0;
-		numHeadsMisc = 0;
+	//  	numHeadsPolitics = 0;
+	// 	numHeadsTech = 0;
+	// 	numHeadsSports = 0;
+	// 	numHeadsEnv = 0;
+	// 	numHeadsInternational = 0;
+	// 	numHeadsMisc = 0;
 
 
-	}
+	// }
 
-	/*wp*/
-	for (var i = 0; i < wpCats.length; i++) {
-		if (wpCats[i] == "politics") {
-			numHeadsPolitics++;
-		}
-		else if (wpCats[i] == "sports") {
-			numHeadsSports++;
-		}
-		else if (wpCats[i] == "technology") {
-			numHeadsTech++;
-		}
-		else if (wpCats[i] == "environment") {
-			numHeadsEnv++;
-		}
-		else if (wpCats[i] == "international") {
-			numHeadsInternational++;
-		}
-		else if (wpCats[i] == "miscellaneous") {
-			numHeadsMisc++;
-		}
-		/*add data to wp json data unit*/
-		wpData2.numHeads = wpNumHeads;
-		wpData2.color = "lightblue";
-		wpData2.source = "Washington Post";
-		wpData2.politics = numHeadsPolitics;
-		wpData2.tech = numHeadsTech;
-		wpData2.sports = numHeadsSports;
-		wpData2.env = numHeadsEnv;
-		wpData2.int = numHeadsInternational;
-	 	wpData2.misc = numHeadsMisc;
+	// /*wp*/
+	// for (var i = 0; i < wpCats.length; i++) {
+	// 	if (wpCats[i] == "politics") {
+	// 		numHeadsPolitics++;
+	// 	}
+	// 	else if (wpCats[i] == "sports") {
+	// 		numHeadsSports++;
+	// 	}
+	// 	else if (wpCats[i] == "technology") {
+	// 		numHeadsTech++;
+	// 	}
+	// 	else if (wpCats[i] == "environment") {
+	// 		numHeadsEnv++;
+	// 	}
+	// 	else if (wpCats[i] == "international") {
+	// 		numHeadsInternational++;
+	// 	}
+	// 	else if (wpCats[i] == "miscellaneous") {
+	// 		numHeadsMisc++;
+	// 	}
+	// 	/*add data to wp json data unit*/
+	// 	wpData2.numHeads = wpNumHeads;
+	// 	wpData2.color = "lightblue";
+	// 	wpData2.source = "Washington Post";
+	// 	wpData2.politics = numHeadsPolitics;
+	// 	wpData2.tech = numHeadsTech;
+	// 	wpData2.sports = numHeadsSports;
+	// 	wpData2.env = numHeadsEnv;
+	// 	wpData2.int = numHeadsInternational;
+	//  	wpData2.misc = numHeadsMisc;
 
-	 	numHeadsPolitics = 0;
-		numHeadsTech = 0;
-		numHeadsSports = 0;
-		numHeadsEnv = 0;
-		numHeadsInternational = 0;
-		numHeadsMisc = 0;
+	//  	numHeadsPolitics = 0;
+	// 	numHeadsTech = 0;
+	// 	numHeadsSports = 0;
+	// 	numHeadsEnv = 0;
+	// 	numHeadsInternational = 0;
+	// 	numHeadsMisc = 0;
 
-	}
+	// }
 
-	/*ABC*/
-	for (var i = 0; i < abcCats.length; i++) {
-		if (abcCats[i] == "politics") {
-			numHeadsPolitics++;
-		}
-		else if (abcCats[i] == "sports") {
-			numHeadsSports++;
-		}
-		else if (abcCats[i] == "technology") {
-			numHeadsTech++;
-		}
-		else if (abcCats[i] == "environment") {
-			numHeadsEnv++;
-		}
-		else if (abcCats[i] == "international") {
-			numHeadsInternational++;
-		}
-		else if (abcCats[i] == "miscellaneous") {
-			numHeadsMisc++;
-		}
-		/*add data to abc json data unit*/
-		abcData2.numHeads = abcNumHeads;
-		abcData2.color = "green";
-		abcData2.source = "ABC";
-		abcData2.politics = numHeadsPolitics;
-		abcData2.tech = numHeadsTech;
-		abcData2.sports = numHeadsSports;
-		abcData2.env = numHeadsEnv;
-		abcData2.int = numHeadsInternational;
-	 	abcData2.misc = numHeadsMisc;
+	// /*ABC*/
+	// for (var i = 0; i < abcCats.length; i++) {
+	// 	if (abcCats[i] == "politics") {
+	// 		numHeadsPolitics++;
+	// 	}
+	// 	else if (abcCats[i] == "sports") {
+	// 		numHeadsSports++;
+	// 	}
+	// 	else if (abcCats[i] == "technology") {
+	// 		numHeadsTech++;
+	// 	}
+	// 	else if (abcCats[i] == "environment") {
+	// 		numHeadsEnv++;
+	// 	}
+	// 	else if (abcCats[i] == "international") {
+	// 		numHeadsInternational++;
+	// 	}
+	// 	else if (abcCats[i] == "miscellaneous") {
+	// 		numHeadsMisc++;
+	// 	}
+	// 	/*add data to abc json data unit*/
+	// 	abcData2.numHeads = abcNumHeads;
+	// 	abcData2.color = "green";
+	// 	abcData2.source = "ABC";
+	// 	abcData2.politics = numHeadsPolitics;
+	// 	abcData2.tech = numHeadsTech;
+	// 	abcData2.sports = numHeadsSports;
+	// 	abcData2.env = numHeadsEnv;
+	// 	abcData2.int = numHeadsInternational;
+	//  	abcData2.misc = numHeadsMisc;
 
-	 	numHeadsPolitics = 0;
-		numHeadsTech = 0;
-		numHeadsSports = 0;
-		numHeadsEnv = 0;
-		numHeadsInternational = 0;
-		numHeadsMisc = 0;
+	//  	numHeadsPolitics = 0;
+	// 	numHeadsTech = 0;
+	// 	numHeadsSports = 0;
+	// 	numHeadsEnv = 0;
+	// 	numHeadsInternational = 0;
+	// 	numHeadsMisc = 0;
 
-	}
+	// }
 	
-	/*bb*/
-	for (var i = 0; i < bbCats.length; i++) {
-		if (bbCats[i] == "politics") {
-			numHeadsPolitics++;
-		}
-		else if (bbCats[i] == "sports") {
-			numHeadsSports++;
-		}
-		else if (bbCats[i] == "technology") {
-			numHeadsTech++;
-		}
-		else if (bbCats[i] == "environment") {
-			numHeadsEnv++;
-		}
-		else if (bbCats[i] == "international") {
-			numHeadsInternational++;
-		}
-		else if (bbCats[i] == "miscellaneous") {
-			numHeadsMisc++;
-		}
-		/*add data to bb json data unit*/
-		bbData2.numHeads = bbNumHeads;
-		bbData2.color = "yellow";
-		bbData2.source = "Breitbart";
-		bbData2.politics = numHeadsPolitics;
-		bbData2.tech = numHeadsTech;
-		bbData2.sports = numHeadsSports;
-		bbData2.env = numHeadsEnv;
-		bbData2.int = numHeadsInternational;
-	 	bbData2.misc = numHeadsMisc;
+	// /*bb*/
+	// for (var i = 0; i < bbCats.length; i++) {
+	// 	if (bbCats[i] == "politics") {
+	// 		numHeadsPolitics++;
+	// 	}
+	// 	else if (bbCats[i] == "sports") {
+	// 		numHeadsSports++;
+	// 	}
+	// 	else if (bbCats[i] == "technology") {
+	// 		numHeadsTech++;
+	// 	}
+	// 	else if (bbCats[i] == "environment") {
+	// 		numHeadsEnv++;
+	// 	}
+	// 	else if (bbCats[i] == "international") {
+	// 		numHeadsInternational++;
+	// 	}
+	// 	else if (bbCats[i] == "miscellaneous") {
+	// 		numHeadsMisc++;
+	// 	}
+	// 	/*add data to bb json data unit*/
+	// 	bbData2.numHeads = bbNumHeads;
+	// 	bbData2.color = "yellow";
+	// 	bbData2.source = "Breitbart";
+	// 	bbData2.politics = numHeadsPolitics;
+	// 	bbData2.tech = numHeadsTech;
+	// 	bbData2.sports = numHeadsSports;
+	// 	bbData2.env = numHeadsEnv;
+	// 	bbData2.int = numHeadsInternational;
+	//  	bbData2.misc = numHeadsMisc;
 
-	 	numHeadsPolitics = 0;
-		numHeadsTech = 0;
-		numHeadsSports = 0;
-		numHeadsEnv = 0;
-		numHeadsInternational = 0;
-		numHeadsMisc = 0;
+	//  	numHeadsPolitics = 0;
+	// 	numHeadsTech = 0;
+	// 	numHeadsSports = 0;
+	// 	numHeadsEnv = 0;
+	// 	numHeadsInternational = 0;
+	// 	numHeadsMisc = 0;
 
-	}
+	// }
 
-	/*Buzzfeed*/
-	for (var i = 0; i < bfCats.length; i++) {
-		if (bfCats[i] == "politics") {
-			numHeadsPolitics++;
-		}
-		else if (bfCats[i] == "sports") {
-			numHeadsSports++;
-		}
-		else if (bfCats[i] == "technology") {
-			numHeadsTech++;
-		}
-		else if (bfCats[i] == "environment") {
-			numHeadsEnv++;
-		}
-		else if (bfCats[i] == "international") {
-			numHeadsInternational++;
-		}
-		else if (bfCats[i] == "miscellaneous") {
-			numHeadsMisc++;
-		}
-		/*add data to bf json data unit*/
-		bfData2.numHeads = bfNumHeads;
-		bfData2.color = "pink";
-		bfData2.source = "Buzzfeed";
-		bfData2.politics = numHeadsPolitics;
-		bfData2.tech = numHeadsTech;
-		bfData2.sports = numHeadsSports;
-		bfData2.env = numHeadsEnv;
-		bfData2.int = numHeadsInternational;
-	 	bfData2.misc = numHeadsMisc;
+	// /*Buzzfeed*/
+	// for (var i = 0; i < bfCats.length; i++) {
+	// 	if (bfCats[i] == "politics") {
+	// 		numHeadsPolitics++;
+	// 	}
+	// 	else if (bfCats[i] == "sports") {
+	// 		numHeadsSports++;
+	// 	}
+	// 	else if (bfCats[i] == "technology") {
+	// 		numHeadsTech++;
+	// 	}
+	// 	else if (bfCats[i] == "environment") {
+	// 		numHeadsEnv++;
+	// 	}
+	// 	else if (bfCats[i] == "international") {
+	// 		numHeadsInternational++;
+	// 	}
+	// 	else if (bfCats[i] == "miscellaneous") {
+	// 		numHeadsMisc++;
+	// 	}
+	// 	/*add data to bf json data unit*/
+	// 	bfData2.numHeads = bfNumHeads;
+	// 	bfData2.color = "pink";
+	// 	bfData2.source = "Buzzfeed";
+	// 	bfData2.politics = numHeadsPolitics;
+	// 	bfData2.tech = numHeadsTech;
+	// 	bfData2.sports = numHeadsSports;
+	// 	bfData2.env = numHeadsEnv;
+	// 	bfData2.int = numHeadsInternational;
+	//  	bfData2.misc = numHeadsMisc;
 
-	 	numHeadsPolitics = 0;
-		numHeadsTech = 0;
-		numHeadsSports = 0;
-		numHeadsEnv = 0;
-		numHeadsInternational = 0;
-		numHeadsMisc = 0;
+	//  	numHeadsPolitics = 0;
+	// 	numHeadsTech = 0;
+	// 	numHeadsSports = 0;
+	// 	numHeadsEnv = 0;
+	// 	numHeadsInternational = 0;
+	// 	numHeadsMisc = 0;
 
-	}
+	// }
 
-	/*China Daily*/
-	for (var i = 0; i < cdCats.length; i++) {
-		if (cdCats[i] == "politics") {
-			numHeadsPolitics++;
-		}
-		else if (cdCats[i] == "sports") {
-			numHeadsSports++;
-		}
-		else if (cdCats[i] == "technology") {
-			numHeadsTech++;
-		}
-		else if (cdCats[i] == "environment") {
-			numHeadsEnv++;
-		}
-		else if (cdCats[i] == "international") {
-			numHeadsInternational++;
-		}
-		else if (cdCats[i] == "miscellaneous") {
-			numHeadsMisc++;
-		}
-		/*add data to cd json data unit*/
-		cdData2.numHeads = cdNumHeads;
-		cdData2.color = "maroon";
-		cdData2.source = "China Daily";
-		cdData2.politics = numHeadsPolitics;
-		cdData2.tech = numHeadsTech;
-		cdData2.sports = numHeadsSports;
-		cdData2.env = numHeadsEnv;
-		cdData2.int = numHeadsInternational;
-	 	cdData2.misc = numHeadsMisc;
+	// /*China Daily*/
+	// for (var i = 0; i < cdCats.length; i++) {
+	// 	if (cdCats[i] == "politics") {
+	// 		numHeadsPolitics++;
+	// 	}
+	// 	else if (cdCats[i] == "sports") {
+	// 		numHeadsSports++;
+	// 	}
+	// 	else if (cdCats[i] == "technology") {
+	// 		numHeadsTech++;
+	// 	}
+	// 	else if (cdCats[i] == "environment") {
+	// 		numHeadsEnv++;
+	// 	}
+	// 	else if (cdCats[i] == "international") {
+	// 		numHeadsInternational++;
+	// 	}
+	// 	else if (cdCats[i] == "miscellaneous") {
+	// 		numHeadsMisc++;
+	// 	}
+	// 	/*add data to cd json data unit*/
+	// 	cdData2.numHeads = cdNumHeads;
+	// 	cdData2.color = "maroon";
+	// 	cdData2.source = "China Daily";
+	// 	cdData2.politics = numHeadsPolitics;
+	// 	cdData2.tech = numHeadsTech;
+	// 	cdData2.sports = numHeadsSports;
+	// 	cdData2.env = numHeadsEnv;
+	// 	cdData2.int = numHeadsInternational;
+	//  	cdData2.misc = numHeadsMisc;
 
-	 	numHeadsPolitics = 0;
-		numHeadsTech = 0;
-		numHeadsSports = 0;
-		numHeadsEnv = 0;
-		numHeadsInternational = 0;
-		numHeadsMisc = 0;
+	//  	numHeadsPolitics = 0;
+	// 	numHeadsTech = 0;
+	// 	numHeadsSports = 0;
+	// 	numHeadsEnv = 0;
+	// 	numHeadsInternational = 0;
+	// 	numHeadsMisc = 0;
 
-	}
+	// }
 
-	/*Sixth Tone*/
-	for (var i = 0; i < stCats.length; i++) {
-		if (stCats[i] == "politics") {
-			numHeadsPolitics++;
-		}
-		else if (stCats[i] == "sports") {
-			numHeadsSports++;
-		}
-		else if (stCats[i] == "technology") {
-			numHeadsTech++;
-		}
-		else if (stCats[i] == "environment") {
-			numHeadsEnv++;
-		}
-		else if (stCats[i] == "international") {
-			numHeadsInternational++;
-		}
-		else if (stCats[i] == "miscellaneous") {
-			numHeadsMisc++;
-		}
-		/*add data to st json data unit*/
-		stData2.numHeads = stNumHeads;
-		stData2.color = "blueViolet";
-		stData2.source = "Sixth Tone";
-		stData2.politics = numHeadsPolitics;
-		stData2.tech = numHeadsTech;
-		stData2.sports = numHeadsSports;
-		stData2.env = numHeadsEnv;
-		stData2.int = numHeadsInternational;
-	 	stData2.misc = numHeadsMisc;
+	// /*Sixth Tone*/
+	// for (var i = 0; i < stCats.length; i++) {
+	// 	if (stCats[i] == "politics") {
+	// 		numHeadsPolitics++;
+	// 	}
+	// 	else if (stCats[i] == "sports") {
+	// 		numHeadsSports++;
+	// 	}
+	// 	else if (stCats[i] == "technology") {
+	// 		numHeadsTech++;
+	// 	}
+	// 	else if (stCats[i] == "environment") {
+	// 		numHeadsEnv++;
+	// 	}
+	// 	else if (stCats[i] == "international") {
+	// 		numHeadsInternational++;
+	// 	}
+	// 	else if (stCats[i] == "miscellaneous") {
+	// 		numHeadsMisc++;
+	// 	}
+	// 	/*add data to st json data unit*/
+	// 	stData2.numHeads = stNumHeads;
+	// 	stData2.color = "blueViolet";
+	// 	stData2.source = "Sixth Tone";
+	// 	stData2.politics = numHeadsPolitics;
+	// 	stData2.tech = numHeadsTech;
+	// 	stData2.sports = numHeadsSports;
+	// 	stData2.env = numHeadsEnv;
+	// 	stData2.int = numHeadsInternational;
+	//  	stData2.misc = numHeadsMisc;
 
-	 	numHeadsPolitics = 0;
-		numHeadsTech = 0;
-		numHeadsSports = 0;
-		numHeadsEnv = 0;
-		numHeadsInternational = 0;
-		numHeadsMisc = 0;
+	//  	numHeadsPolitics = 0;
+	// 	numHeadsTech = 0;
+	// 	numHeadsSports = 0;
+	// 	numHeadsEnv = 0;
+	// 	numHeadsInternational = 0;
+	// 	numHeadsMisc = 0;
 
-	}
+	// }
 
-	jsonData2.push(wpData2);
-	jsonData2.push(nbcData2);
-	jsonData2.push(wpData2);
-	jsonData2.push(abcData2);
-	jsonData2.push(bbData2);
-	jsonData2.push(bfData2);
-	jsonData2.push(cdData2);
-	jsonData2.push(stData2);
+	// jsonData2.push(wpData2);
+	// jsonData2.push(nbcData2);
+	// jsonData2.push(wpData2);
+	// jsonData2.push(abcData2);
+	// jsonData2.push(bbData2);
+	// jsonData2.push(bfData2);
+	// jsonData2.push(cdData2);
+	// jsonData2.push(stData2);
 
-	console.log(jsonData2);
+	// console.log(jsonData2);
 
-	/*create visualization!*/
-
+	// /*create visualization!*/
+	// graph2.selectAll(".bar")
+ //        .data(jsonData2)
+ //        .enter()
+ //        .append("rect")
+ //        .attr("class", "bar")
+ //        .attr("x", function (d) {
+ //            //return x(d.x);
+ //            return axisScaleX2.bandwidth();
+            
+ //        })
+ //        .attr("y", function (d) {
+ //            //return y(d.y + d.y0);
+ //            return (containerHeight-60) - d.numHeads;
+ //        })
+ //        .attr("height", function (d) {
+ //            //return y(d.y0) - y(d.y + d.y0);
+ //            console.log(d);
+ //            return d.numHeads;
+ //        })
+ //        .attr("width", function (d){
+ //        	return axisScaleX2.bandwidth();
+ //        	//return containerWidth/10;
+ //        })
+ //        .style("fill", function(d){
+	// 				return d.color
+	// 			});
 
 }, function (error) {
     console.error('file loading error: ', error);
