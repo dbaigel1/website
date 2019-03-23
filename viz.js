@@ -2,9 +2,8 @@
 1. add descriptions for graphs above each graph
 
 graph1
-1. fix and beautify tooltips
 2. make whole thing responsive
-3. make legend also show tooltip
+
 
 
 graph2
@@ -557,7 +556,7 @@ dataFile.then(function (data) {
 				.style("stroke", "black")
 				.attr("class", function(d, i) {  
   					
-  					return "source" + i; //+ colorScale.domain()[i];
+  					return "source" + i; 
 
 				})
 				.on("mouseover", function(d, i){
@@ -565,11 +564,11 @@ dataFile.then(function (data) {
 					tooltip.style("background-color", d.color);
 
 					graph1.selectAll(".source" + i)
-						  .style("fill-opacity", 1)//".news source " + colorScale.domain()[i]).style("fill-opacity", 0.7);
+						  .style("fill-opacity", 1)
 						  .style("font-weight", "bold")
 						  .attr("stroke-width", "2.5");
 					
-					console.log(graph1.selectAll(".source" + i).size());//"." + "news source " + colorScale.domain()[i]).style("fill-opacity", 1).size());
+					//console.log(graph1.selectAll(".source" + i).size());
 
 
 				
@@ -577,23 +576,20 @@ dataFile.then(function (data) {
 				.on("mouseout", function(d, i){
 					
 					tooltip.style("display", "none");
-					
-					//d3.select(this)
-					//.style("fill-opacity", .5);
 
 					graph1.selectAll(".source" + i)
 							.style("fill-opacity", .5)
 							.style("font-weight", "normal")
-							.attr("stroke-width", "1");//".news source " + colorScale.domain()[i]).style("fill-opacity", 0.7);
+							.attr("stroke-width", "1");
 
 		
 
 				})
 				.on("mousemove", function(d){
-					/*var xPos = d3.mouse(this)[0];
-					var yPos = d3.mouse(this)[1] + 200;*/
-					var xPos = 100;
-					var yPos = 100;
+					var xPos = d3.mouse(this)[0];
+					var yPos = d3.mouse(this)[1] + 200;
+					//var xPos = 100;
+					//var yPos = 100;
 
 					//tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
 					if (d.source == "target") {
@@ -614,6 +610,8 @@ dataFile.then(function (data) {
 								.style("width", 170+"px")
 								.style("height", 120+"px")
 								.style("text-align", "left");
+
+
 					}
 
 					
@@ -629,7 +627,9 @@ dataFile.then(function (data) {
 
 	var tooltip = d3.select("body")
 						.append("div")
-						.attr('class', 'tooltip');
+						.attr('class', 'tooltip')
+						.style("border", "2px solid black");
+
 
 	tooltip.append("p")
 	//.attr("x", 15)
@@ -664,12 +664,10 @@ dataFile.then(function (data) {
 					
 				    	graph1.selectAll(".source" + i).style("fill-opacity", 1)
 				    	.style("font-weight", "bold")
-				    	
-				    	.attr("stroke-width", "2.5"); //+ colorScale.domain()[i]).style("fill-opacity", 1);
+				    	.attr("stroke-width", "2.5"); 
 
-						//d3.select(this)
-						//.style("fill-opacity", 1)
-						//.raise();
+						
+						
 
 						
 
