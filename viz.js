@@ -265,10 +265,15 @@ dataFile.then(function (data) {
 	
 	/*Graph 1*/
 
-	var graph1 = d3.select("#graph1")
-						 .append("svg")
-						 .attr("width", containerWidth)
-						 .attr("height", containerHeight)
+/*test*/	var graph1 = d3.select('#graph1').append("svg")
+			    .attr("width", '80%')
+			    .attr("height", '80%')
+			    .attr('viewBox','0 0 '+ containerWidth +' '+containerHeight)
+			    .attr('preserveAspectRatio','xMinYMin');
+			    //.style("border", "1px solid black");
+
+
+
 	/*.style("border", "1px solid black");*/
 
 	/* Create Axes */
@@ -722,6 +727,15 @@ dataFile.then(function (data) {
 						    .attr("transform", "rotate(-90)")
 						    .style("font-size", "20px")
 						    .text("Subjectivity");
+	/* graph1 title */
+	graph1.append("text")
+        .attr("x", (containerWidth / 2))             
+        .attr("y", 25)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "36px") 
+        .style("font-weight", "bold")
+        .style("text-decoration", "underline")  
+        .text("Polarity vs. Subjectivity");
 
 /******************************************************************/
 
