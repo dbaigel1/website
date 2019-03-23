@@ -3,8 +3,8 @@
 
 graph1
 1. fix and beautify tooltips
-4. add color legend
 2. make whole thing responsive
+3. make legend also show tooltip
 
 
 graph2
@@ -545,10 +545,10 @@ dataFile.then(function (data) {
 				})
 				.attr("r", function(d){
 					if (d.source == "target") {
-						return 10;
+						return 18;
 					}
 					else
-						return 20;
+						return 27;
 				})
 				.style("fill", function(d){
 					return d.color
@@ -557,16 +557,19 @@ dataFile.then(function (data) {
 				.style("stroke", "black")
 				.attr("class", function(d, i) {  
   					
-  					return "test" + i; //+ colorScale.domain()[i];
+  					return "source" + i; //+ colorScale.domain()[i];
 
 				})
 				.on("mouseover", function(d, i){
 					tooltip.style("display", null);
 					tooltip.style("background-color", d.color);
 
-					graph1.selectAll(".test" + i).style("fill-opacity", 1);//".news source " + colorScale.domain()[i]).style("fill-opacity", 0.7);
-
-					console.log(graph1.selectAll(".test" + i).size());//"." + "news source " + colorScale.domain()[i]).style("fill-opacity", 1).size());
+					graph1.selectAll(".source" + i)
+						  .style("fill-opacity", 1)//".news source " + colorScale.domain()[i]).style("fill-opacity", 0.7);
+						  .style("font-weight", "bold")
+						  .attr("stroke-width", "2.5");
+					
+					console.log(graph1.selectAll(".source" + i).size());//"." + "news source " + colorScale.domain()[i]).style("fill-opacity", 1).size());
 
 
 				
@@ -574,10 +577,14 @@ dataFile.then(function (data) {
 				.on("mouseout", function(d, i){
 					
 					tooltip.style("display", "none");
-					d3.select(this)
-					.style("fill-opacity", .5);
+					
+					//d3.select(this)
+					//.style("fill-opacity", .5);
 
-					graph1.selectAll(".test" + i).style("fill-opacity", .5);//".news source " + colorScale.domain()[i]).style("fill-opacity", 0.7);
+					graph1.selectAll(".source" + i)
+							.style("fill-opacity", .5)
+							.style("font-weight", "normal")
+							.attr("stroke-width", "1");//".news source " + colorScale.domain()[i]).style("fill-opacity", 0.7);
 
 		
 
@@ -649,21 +656,22 @@ dataFile.then(function (data) {
 				    })
 				    .style("fill-opacity", .5)
 				    .attr("class", function(d, i) {  
-  						return "test" + i;//colorScale.domain()[i];
+  						return "source" + i;//colorScale.domain()[i];
 
 					})
 				    
 				    .on("mouseover", function(d, i){
 					
-				    	graph1.selectAll(".test" + i).style("fill-opacity", 1); //+ colorScale.domain()[i]).style("fill-opacity", 1);
+				    	graph1.selectAll(".source" + i).style("fill-opacity", 1)
+				    	.style("font-weight", "bold")
+				    	
+				    	.attr("stroke-width", "2.5"); //+ colorScale.domain()[i]).style("fill-opacity", 1);
 
-						d3.select(this)
-						.style("fill-opacity", 1)
-						.raise();
+						//d3.select(this)
+						//.style("fill-opacity", 1)
+						//.raise();
 
-						console.log(graph1.selectAll(".test" + i).style("fill-opacity", 1).size());//+ colorScale.domain()[i]).style("fill-opacity", 1).size());
-
-						//TO-DO: fix test to an actual name for class
+						
 
 
 				
@@ -671,12 +679,16 @@ dataFile.then(function (data) {
 					
 					.on("mouseout", function(d, i){
 						
-						d3.select(this)
-						.style("fill-opacity", .5)
-						.raise();
+						//d3.select(this)
+						//.style("fill-opacity", .5)
+						//.raise();
 						
-				    	graph1.selectAll(".test" + i).style("fill-opacity", .5); //+ colorScale.domain()[i]).style("fill-opacity", 1);
-				    	console.log(graph1.selectAll(".test" + i).style("fill-opacity", .5).size());
+				    	graph1.selectAll(".source" + i)
+				    		  .style("fill-opacity", .5)
+				    		  .style("font-weight", "normal")
+				    		  .attr("stroke-width", "1");//+ colorScale.domain()[i]).style("fill-opacity", 1);
+				    	
+				    	//console.log(graph1.selectAll(".test" + i).style("fill-opacity", .5).size());
 
 					});
 
