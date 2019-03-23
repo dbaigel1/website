@@ -591,10 +591,10 @@ dataFile.then(function (data) {
 
 				})
 				.on("mousemove", function(d){
-					var xPos = d3.mouse(this)[0];
-					var yPos = d3.mouse(this)[1] + 200;
-					//var xPos = 100;
-					//var yPos = 100;
+				
+					var xPos = d3.event.pageX;
+					var yPos = d3.event.pageY;
+
 
 					//tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
 					if (d.source == "target") {
@@ -619,9 +619,6 @@ dataFile.then(function (data) {
 
 					}
 
-					
-					/*TO-DO: format tooltip and entire chart to be responsive to changes in 
-					window size */
 					d3.select('.tooltip')
 					  .style("left", xPos + "px")
 					  .style("top", yPos  + "px");
@@ -629,7 +626,6 @@ dataFile.then(function (data) {
 				})
 			
 	/* tooltip */
-
 	var tooltip = d3.select("body")
 						.append("div")
 						.attr('class', 'tooltip')
@@ -644,8 +640,6 @@ dataFile.then(function (data) {
 
 	
 	/* color legend */		
-	
-
     var legend = d3.select('svg')
 				    .append("g")
 				    .selectAll("g")
@@ -671,20 +665,9 @@ dataFile.then(function (data) {
 				    	.style("font-weight", "bold")
 				    	.attr("stroke-width", "2.5"); 
 
-						
-						
-
-						
-
-
-				
 					})
 					
 					.on("mouseout", function(d, i){
-						
-						//d3.select(this)
-						//.style("fill-opacity", .5)
-						//.raise();
 						
 				    	graph1.selectAll(".source" + i)
 				    		  .style("fill-opacity", .5)
