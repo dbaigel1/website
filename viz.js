@@ -1,5 +1,6 @@
 /*TO-DO: 
 1. add descriptions for graphs above each graph
+2. make functions for code i.e. makeData, drawGraph, writeLabels, drawAxes etc.
 
 graph1
 2. make whole thing responsive
@@ -44,6 +45,9 @@ dataFile.then(function (data) {
 
 	var newsSources = ["Fox", "NBC", "Wash Post", "ABC", "Breitbart", "BuzzFeed", "China Daily", "Sixth Tone", "Target"]; /* contains order of newssources */
 	var colors = ["#FF0000", "#FFA500", "#ADD8E6", "#008000", "#FFFF00", "#FFC0CB", "#800000", "#8A2BE2", "#000000"];
+	var newsSourcesNoTarget = ["Fox", "NBC", "Wash Post", "ABC", "Breitbart", "BuzzFeed", "China Daily", "Sixth Tone"];
+	var categories = ["Politics", "Sports", "International", "Environment", "Technology", "Miscellaneous"];
+
 	/*Fox*/
 	var foxAvgPolarity = 0;
     var foxAvgSubj = 0;
@@ -265,7 +269,7 @@ dataFile.then(function (data) {
 	
 	/*Graph 1*/
 
-/*test*/	var graph1 = d3.select('#graph1').append("svg")
+	var graph1 = d3.select('#graph1').append("svg")
 			    .attr("width", '80%')
 			    .attr("height", '80%')
 			    .attr('viewBox','0 0 '+ containerWidth +' '+containerHeight)
@@ -437,7 +441,6 @@ dataFile.then(function (data) {
 
 	/* rounding decimals */
 	for (var i = 0; i < allAvgPols.length; i++) {
-		//console.log(allAvgSubjs[i]);
 		allAvgPols[i] = Number(allAvgPols[i].toFixed(2));
 		allAvgSubjs[i] = Number(allAvgSubjs[i].toFixed(2));  
 	}
@@ -572,11 +575,7 @@ dataFile.then(function (data) {
 						  .style("fill-opacity", 1)
 						  .style("font-weight", "bold")
 						  .attr("stroke-width", "2.5");
-					
-					//console.log(graph1.selectAll(".source" + i).size());
 
-
-				
 				})
 				.on("mouseout", function(d, i){
 					
@@ -602,7 +601,8 @@ dataFile.then(function (data) {
 						tooltip.style("background-color", "gray")
 								.style("width", 60+"px")
 								.style("height", 60+"px")
-								.style("text-align", "center");
+								.style("text-align", "center")
+								.style("border", "2px solid black");
 					
 					}
 					else {
@@ -614,7 +614,8 @@ dataFile.then(function (data) {
 						tooltip.style("background-color", d.color)
 								.style("width", 170+"px")
 								.style("height", 120+"px")
-								.style("text-align", "left");
+								.style("text-align", "left")
+								.style("border", "2px solid black");
 
 
 					}
@@ -626,10 +627,10 @@ dataFile.then(function (data) {
 				})
 			
 	/* tooltip */
-	var tooltip = d3.select("body")
+	var tooltip = d3.select("#graph1")
 						.append("div")
 						.attr('class', 'tooltip')
-						.style("border", "2px solid black");
+						//.style("border", "2px solid black");
 
 
 	tooltip.append("p")
@@ -672,10 +673,7 @@ dataFile.then(function (data) {
 				    	graph1.selectAll(".source" + i)
 				    		  .style("fill-opacity", .5)
 				    		  .style("font-weight", "normal")
-				    		  .attr("stroke-width", "1");//+ colorScale.domain()[i]).style("fill-opacity", 1);
-				    	
-				    	//console.log(graph1.selectAll(".test" + i).style("fill-opacity", .5).size());
-
+				    		  .attr("stroke-width", "1");
 					});
 
 
@@ -722,429 +720,477 @@ dataFile.then(function (data) {
 
 /******************************************************************/
 
-	// /* Graph 2 */
-	// var graph2 = d3.select("#graph2")
-	// 					 .append("svg")
-	// 					 .attr("width", containerWidth)
-	// 					 .attr("height", containerHeight)
-	// /*.style("border", "1px solid black");*/
+	/* Graph 2 */
 
-	// /* Create Axes */
-	// var axisScaleX2 = d3.scaleBand()
- //                        .domain(newsSources) //.domain([-1,1]) /*TO-DO: change domain to array of category names*/
- //                         .range([50,containerWidth-50]);
+	/* make data */
+	var biggestCat = 0; /* used for scaling the y axis */
+	var catCounts = [0,0,0,0,0,0];
 
-	// var xAxis2 = d3.axisTop()
- //                   .scale(axisScaleX2);
+	var jsonData2 = [];			
+	var foxData2 = new Object();
+	var nbcData2 = new Object();
+	var wpData2 = new Object();
+	var abcData2 = new Object();
+	var bbData2 = new Object();
+	var bfData2 = new Object();
+	var cdData2 = new Object();
+	var stData2 = new Object();
+
+	var numHeadsPolitics = 0;
+	var numHeadsTech = 0;
+	var numHeadsSports = 0;
+	var numHeadsEnv = 0;
+	var numHeadsInternational = 0;
+	var numHeadsMisc = 0;
+	
+	/*fox*/
+	for (var i = 0; i < foxCats.length; i++) {
+		if (foxCats[i] == "politics") {
+			numHeadsPolitics++;
+		}
+		else if (foxCats[i] == "sports") {
+			numHeadsSports++;
+		}
+		else if (foxCats[i] == "technology") {
+			numHeadsTech++;
+		}
+		else if (foxCats[i] == "environment") {
+			numHeadsEnv++;
+		}
+		else if (foxCats[i] == "international") {
+			numHeadsInternational++;
+		}
+		else if (foxCats[i] == "miscellaneous") {
+			numHeadsMisc++;
+		}
+		/*add data to fox json data unit*/
+		foxData2.numHeads = foxNumHeads;
+		foxData2.color = "red";
+		foxData2.source = "Fox";
+		foxData2.politics = numHeadsPolitics;
+		foxData2.tech = numHeadsTech;
+		foxData2.sports = numHeadsSports;
+		foxData2.env = numHeadsEnv;
+		foxData2.int = numHeadsInternational;
+	 	foxData2.misc = numHeadsMisc;
+
+	}
+	numHeadsPolitics = 0;
+	numHeadsTech = 0;
+	numHeadsSports = 0;
+	numHeadsEnv = 0;
+	numHeadsInternational = 0;
+	numHeadsMisc = 0;
+
+	/*NBC*/
+	for (var i = 0; i < nbcCats.length; i++) {
+		if (nbcCats[i] == "politics") {
+			numHeadsPolitics++;
+		}
+		else if (nbcCats[i] == "sports") {
+			numHeadsSports++;
+		}
+		else if (nbcCats[i] == "technology") {
+			numHeadsTech++;
+		}
+		else if (nbcCats[i] == "environment") {
+			numHeadsEnv++;
+		}
+		else if (nbcCats[i] == "international") {
+			numHeadsInternational++;
+		}
+		else if (nbcCats[i] == "miscellaneous") {
+			numHeadsMisc++;
+		}
+		/*add data to nbc json data unit*/
+		nbcData2.numHeads = nbcNumHeads;
+		nbcData2.color = "orange";
+		nbcData2.source = "NBC";
+		nbcData2.politics = numHeadsPolitics;
+		nbcData2.tech = numHeadsTech;
+		nbcData2.sports = numHeadsSports;
+		nbcData2.env = numHeadsEnv;
+		nbcData2.int = numHeadsInternational;
+	 	nbcData2.misc = numHeadsMisc;
+	}
+
+	numHeadsPolitics = 0;
+	numHeadsTech = 0;
+	numHeadsSports = 0;
+	numHeadsEnv = 0;
+	numHeadsInternational = 0;
+	numHeadsMisc = 0;
+
+	/*wp*/
+	for (var i = 0; i < wpCats.length; i++) {
+		if (wpCats[i] == "politics") {
+			numHeadsPolitics++;
+		}
+		else if (wpCats[i] == "sports") {
+			numHeadsSports++;
+		}
+		else if (wpCats[i] == "technology") {
+			numHeadsTech++;
+		}
+		else if (wpCats[i] == "environment") {
+			numHeadsEnv++;
+		}
+		else if (wpCats[i] == "international") {
+			numHeadsInternational++;
+		}
+		else if (wpCats[i] == "miscellaneous") {
+			numHeadsMisc++;
+		}
+		/*add data to wp json data unit*/
+		wpData2.numHeads = wpNumHeads;
+		wpData2.color = "lightblue";
+		wpData2.source = "Washington Post";
+		wpData2.politics = numHeadsPolitics;
+		wpData2.tech = numHeadsTech;
+		wpData2.sports = numHeadsSports;
+		wpData2.env = numHeadsEnv;
+		wpData2.int = numHeadsInternational;
+	 	wpData2.misc = numHeadsMisc;
+	}
+
+ 	numHeadsPolitics = 0;
+	numHeadsTech = 0;
+	numHeadsSports = 0;
+	numHeadsEnv = 0;
+	numHeadsInternational = 0;
+	numHeadsMisc = 0;
+
+	/*ABC*/
+	for (var i = 0; i < abcCats.length; i++) {
+		if (abcCats[i] == "politics") {
+			numHeadsPolitics++;
+		}
+		else if (abcCats[i] == "sports") {
+			numHeadsSports++;
+		}
+		else if (abcCats[i] == "technology") {
+			numHeadsTech++;
+		}
+		else if (abcCats[i] == "environment") {
+			numHeadsEnv++;
+		}
+		else if (abcCats[i] == "international") {
+			numHeadsInternational++;
+		}
+		else if (abcCats[i] == "miscellaneous") {
+			numHeadsMisc++;
+		}
+		/*add data to abc json data unit*/
+		abcData2.numHeads = abcNumHeads;
+		abcData2.color = "green";
+		abcData2.source = "ABC";
+		abcData2.politics = numHeadsPolitics;
+		abcData2.tech = numHeadsTech;
+		abcData2.sports = numHeadsSports;
+		abcData2.env = numHeadsEnv;
+		abcData2.int = numHeadsInternational;
+	 	abcData2.misc = numHeadsMisc;
+	}
+	
+	numHeadsPolitics = 0;
+	numHeadsTech = 0;
+	numHeadsSports = 0;
+	numHeadsEnv = 0;
+	numHeadsInternational = 0;
+	numHeadsMisc = 0;
+
+	/*bb*/
+	for (var i = 0; i < bbCats.length; i++) {
+		if (bbCats[i] == "politics") {
+			numHeadsPolitics++;
+		}
+		else if (bbCats[i] == "sports") {
+			numHeadsSports++;
+		}
+		else if (bbCats[i] == "technology") {
+			numHeadsTech++;
+		}
+		else if (bbCats[i] == "environment") {
+			numHeadsEnv++;
+		}
+		else if (bbCats[i] == "international") {
+			numHeadsInternational++;
+		}
+		else if (bbCats[i] == "miscellaneous") {
+			numHeadsMisc++;
+		}
+		/*add data to bb json data unit*/
+		bbData2.numHeads = bbNumHeads;
+		bbData2.color = "yellow";
+		bbData2.source = "Breitbart";
+		bbData2.politics = numHeadsPolitics;
+		bbData2.tech = numHeadsTech;
+		bbData2.sports = numHeadsSports;
+		bbData2.env = numHeadsEnv;
+		bbData2.int = numHeadsInternational;
+	 	bbData2.misc = numHeadsMisc;
+	}
+
+	numHeadsPolitics = 0;
+	numHeadsTech = 0;
+	numHeadsSports = 0;
+	numHeadsEnv = 0;
+	numHeadsInternational = 0;
+	numHeadsMisc = 0;
+
+	/*Buzzfeed*/
+	for (var i = 0; i < bfCats.length; i++) {
+		if (bfCats[i] == "politics") {
+			numHeadsPolitics++;
+		}
+		else if (bfCats[i] == "sports") {
+			numHeadsSports++;
+		}
+		else if (bfCats[i] == "technology") {
+			numHeadsTech++;
+		}
+		else if (bfCats[i] == "environment") {
+			numHeadsEnv++;
+		}
+		else if (bfCats[i] == "international") {
+			numHeadsInternational++;
+		}
+		else if (bfCats[i] == "miscellaneous") {
+			numHeadsMisc++;
+		}
+		/*add data to bf json data unit*/
+		bfData2.numHeads = bfNumHeads;
+		bfData2.color = "pink";
+		bfData2.source = "Buzzfeed";
+		bfData2.politics = numHeadsPolitics;
+		bfData2.tech = numHeadsTech;
+		bfData2.sports = numHeadsSports;
+		bfData2.env = numHeadsEnv;
+		bfData2.int = numHeadsInternational;
+	 	bfData2.misc = numHeadsMisc;
+	}
+
+	numHeadsPolitics = 0;
+	numHeadsTech = 0;
+	numHeadsSports = 0;
+	numHeadsEnv = 0;
+	numHeadsInternational = 0;
+	numHeadsMisc = 0;
+
+	/*China Daily*/
+	for (var i = 0; i < cdCats.length; i++) {
+		if (cdCats[i] == "politics") {
+			numHeadsPolitics++;
+		}
+		else if (cdCats[i] == "sports") {
+			numHeadsSports++;
+		}
+		else if (cdCats[i] == "technology") {
+			numHeadsTech++;
+		}
+		else if (cdCats[i] == "environment") {
+			numHeadsEnv++;
+		}
+		else if (cdCats[i] == "international") {
+			numHeadsInternational++;
+		}
+		else if (cdCats[i] == "miscellaneous") {
+			numHeadsMisc++;
+		}
+		
+		/*add data to cd json data unit*/
+		cdData2.numHeads = cdNumHeads;
+		cdData2.color = "maroon";
+		cdData2.source = "China Daily";
+		cdData2.politics = numHeadsPolitics;
+		cdData2.tech = numHeadsTech;
+		cdData2.sports = numHeadsSports;
+		cdData2.env = numHeadsEnv;
+		cdData2.int = numHeadsInternational;
+	 	cdData2.misc = numHeadsMisc;
+	}
+	numHeadsPolitics = 0;
+	numHeadsTech = 0;
+	numHeadsSports = 0;
+	numHeadsEnv = 0;
+	numHeadsInternational = 0;
+	numHeadsMisc = 0;
+
+	/*Sixth Tone*/
+	for (var i = 0; i < stCats.length; i++) {
+		if (stCats[i] == "politics") {
+			numHeadsPolitics++;
+		}
+		else if (stCats[i] == "sports") {
+			numHeadsSports++;
+		}
+		else if (stCats[i] == "technology") {
+			numHeadsTech++;
+		}
+		else if (stCats[i] == "environment") {
+			numHeadsEnv++;
+		}
+		else if (stCats[i] == "international") {
+			numHeadsInternational++;
+		}
+		else if (stCats[i] == "miscellaneous") {
+			numHeadsMisc++;
+		}
+		/*add data to st json data unit*/
+		stData2.numHeads = stNumHeads;
+		stData2.color = "blueViolet";
+		stData2.source = "Sixth Tone";
+		stData2.politics = numHeadsPolitics;
+		stData2.tech = numHeadsTech;
+		stData2.sports = numHeadsSports;
+		stData2.env = numHeadsEnv;
+		stData2.int = numHeadsInternational;
+	 	stData2.misc = numHeadsMisc;
+	}
+
+
+ 	numHeadsPolitics = 0;
+	numHeadsTech = 0;
+	numHeadsSports = 0;
+	numHeadsEnv = 0;
+	numHeadsInternational = 0;
+	numHeadsMisc = 0;
+
+	jsonData2.push(foxData2);
+	jsonData2.push(nbcData2);
+	jsonData2.push(wpData2);
+	jsonData2.push(abcData2);
+	jsonData2.push(bbData2);
+	jsonData2.push(bfData2);
+	jsonData2.push(cdData2);
+	jsonData2.push(stData2);
+
+	console.log(jsonData2);
+	
+	/*TO-DO: change data to look like an array of categories, 
+	where in each category are the different news sources*/
+	var categoryData = [];
+	var politicsArray = [];
+	var sportsArray = [];
+	var intArray = [];
+	var envArray = [];
+	var techArray = [];
+	var miscArray = [];
+
+
+	/* count of headlines for each category */
+	for (var i = 0; i < jsonData2.length; i++) {
+			catCounts[0] += jsonData2[i].politics;
+			catCounts[1] += jsonData2[i].sports;
+			catCounts[2] += jsonData2[i].int;
+			catCounts[3] += jsonData2[i].env;
+			catCounts[4] += jsonData2[i].tech;
+			catCounts[5] += jsonData2[i].misc;
+
+			politicsArray.push(jsonData2[i].politics);
+			sportsArray.push(jsonData2[i].sports);
+			intArray.push(jsonData2[i].int);
+			envArray.push(jsonData2[i].env);
+			techArray.push(jsonData2[i].tech);
+			miscArray.push(jsonData2[i].misc);
+	}
+	categoryData.push(politicsArray, sportsArray, intArray, envArray, techArray, miscArray);
+
+	console.log(categoryData);
+
+	/* determine y axis scale using cat with most headlines*/
+	for (var i = 0; i < catCounts.length; i++) {
+		if (catCounts[i] > biggestCat) {
+			biggestCat = catCounts[i];
+		}
+	}
+	
+	/* draw graph */
+	var graph2 = d3.select('#graph2')
+					.append("svg")
+			    	.attr("width", '80%')
+			    	.attr("height", '80%')
+			    	.attr('viewBox','0 0 '+ containerWidth +' '+containerHeight)
+			    	.attr('preserveAspectRatio','xMinYMin');
+	/*.style("border", "1px solid black");*/
+
+	/* Create Axes */
+	var axisScaleX2 = d3.scaleBand()
+                        .domain(categories)
+                        .range([50,containerWidth-50]);
+
+	var xAxis2 = d3.axisTop()
+                   .scale(axisScaleX2);
  
- //    var xAxisGroup2 = graph2.append("g")
- //    						.attr("transform", `translate(0, ${containerHeight-30})`)
- //    						.call(xAxis2);
+    var xAxisGroup2 = graph2.append("g")
+    						.attr("transform", `translate(0, ${containerHeight-30})`)
+    						.call(xAxis2);
 
- //    var axisScaleY2 = d3.scaleLinear()
- //    					.domain([totalNumHeads, 0])
- //    					.range([50,containerHeight-60]);
+    var axisScaleY2 = d3.scaleLinear()
+    					.domain([biggestCat, 0])
+    					.range([50,containerHeight-60]);
 
- //    var yAxis2 = d3.axisRight()
- //    				.scale(axisScaleY2);
+    var yAxis2 = d3.axisRight()
+    				.scale(axisScaleY2);
 
- //    var yAxisGroup2 = graph2.append("g")
- //    .attr("transform", "translate(30, 0)")
- //    .call(yAxis2);
+    var yAxisGroup2 = graph2.append("g")
+    .attr("transform", "translate(30, 0)")
+    .call(yAxis2);
 
- //    /* axis labels */
-	// var xLabel2 = graph2.append("text")
-	// 					     .attr("text-anchor", "middle")
-	// 					     .attr("x", containerWidth/2)
-	// 					     .attr("y", containerHeight-10)
-	// 					     .style("font-size", "20px")
-	// 					     .text("News Source");
+    /* axis labels */
+	var xLabel2 = graph2.append("text")
+						     .attr("text-anchor", "middle")
+						     .attr("x", containerWidth/2)
+						     .attr("y", containerHeight-10)
+						     .style("font-size", "20px")
+						     .text("Headline Category");
 
-	// var yLabel2 = graph2.append("text")
-	// 						.attr("text-anchor", "middle")
-	// 					    .attr("y", 15)
-	// 					    .attr("x", -containerHeight/2)	
-	// 					    .attr("transform", "rotate(-90)")
-	// 					    .style("font-size", "20px")
-	// 					    .text("Number of Headlines");
-
-	// /* make data */
-	// var jsonData2 = [];			
-	// var wpData2 = new Object();
-	// var nbcData2 = new Object();
-	// var wpData2 = new Object();
-	// var abcData2 = new Object();
-	// var bbData2 = new Object();
-	// var bfData2 = new Object();
-	// var cdData2 = new Object();
-	// var stData2 = new Object();
-
-	// var numHeadsPolitics = 0;
-	// var numHeadsTech = 0;
-	// var numHeadsSports = 0;
-	// var numHeadsEnv = 0;
-	// var numHeadsInternational = 0;
-	// var numHeadsMisc = 0;
-	
-	// /*wp*/
-	// for (var i = 0; i < wpCats.length; i++) {
-	// 	if (wpCats[i] == "politics") {
-	// 		numHeadsPolitics++;
-	// 	}
-	// 	else if (wpCats[i] == "sports") {
-	// 		numHeadsSports++;
-	// 	}
-	// 	else if (wpCats[i] == "technology") {
-	// 		numHeadsTech++;
-	// 	}
-	// 	else if (wpCats[i] == "environment") {
-	// 		numHeadsEnv++;
-	// 	}
-	// 	else if (wpCats[i] == "international") {
-	// 		numHeadsInternational++;
-	// 	}
-	// 	else if (wpCats[i] == "miscellaneous") {
-	// 		numHeadsMisc++;
-	// 	}
-	// 	/*add data to wp json data unit*/
-	// 	wpData2.numHeads = wpNumHeads;
-	// 	wpData2.color = "red";
-	// 	wpData2.source = "wp";
-	// 	wpData2.politics = numHeadsPolitics;
-	// 	wpData2.tech = numHeadsTech;
-	// 	wpData2.sports = numHeadsSports;
-	// 	wpData2.env = numHeadsEnv;
-	// 	wpData2.int = numHeadsInternational;
-	//  	wpData2.misc = numHeadsMisc;
-
-	//  	numHeadsPolitics = 0;
-	// 	numHeadsTech = 0;
-	// 	numHeadsSports = 0;
-	// 	numHeadsEnv = 0;
-	// 	numHeadsInternational = 0;
-	// 	numHeadsMisc = 0;
-
-	// }
-
-	// /*NBC*/
-	// for (var i = 0; i < nbcCats.length; i++) {
-	// 	if (nbcCats[i] == "politics") {
-	// 		numHeadsPolitics++;
-	// 	}
-	// 	else if (nbcCats[i] == "sports") {
-	// 		numHeadsSports++;
-	// 	}
-	// 	else if (nbcCats[i] == "technology") {
-	// 		numHeadsTech++;
-	// 	}
-	// 	else if (nbcCats[i] == "environment") {
-	// 		numHeadsEnv++;
-	// 	}
-	// 	else if (nbcCats[i] == "international") {
-	// 		numHeadsInternational++;
-	// 	}
-	// 	else if (nbcCats[i] == "miscellaneous") {
-	// 		numHeadsMisc++;
-	// 	}
-	// 	/*add data to nbc json data unit*/
-	// 	nbcData2.numHeads = nbcNumHeads;
-	// 	nbcData2.color = "orange";
-	// 	nbcData2.source = "NBC";
-	// 	nbcData2.politics = numHeadsPolitics;
-	// 	nbcData2.tech = numHeadsTech;
-	// 	nbcData2.sports = numHeadsSports;
-	// 	nbcData2.env = numHeadsEnv;
-	// 	nbcData2.int = numHeadsInternational;
-	//  	nbcData2.misc = numHeadsMisc;
-
-	//  	numHeadsPolitics = 0;
-	// 	numHeadsTech = 0;
-	// 	numHeadsSports = 0;
-	// 	numHeadsEnv = 0;
-	// 	numHeadsInternational = 0;
-	// 	numHeadsMisc = 0;
+	var yLabel2 = graph2.append("text")
+							.attr("text-anchor", "middle")
+						    .attr("y", 15)
+						    .attr("x", -containerHeight/2)	
+						    .attr("transform", "rotate(-90)")
+						    .style("font-size", "20px")
+						    .text("Number of Headlines");
 
 
-	// }
-
-	// /*wp*/
-	// for (var i = 0; i < wpCats.length; i++) {
-	// 	if (wpCats[i] == "politics") {
-	// 		numHeadsPolitics++;
-	// 	}
-	// 	else if (wpCats[i] == "sports") {
-	// 		numHeadsSports++;
-	// 	}
-	// 	else if (wpCats[i] == "technology") {
-	// 		numHeadsTech++;
-	// 	}
-	// 	else if (wpCats[i] == "environment") {
-	// 		numHeadsEnv++;
-	// 	}
-	// 	else if (wpCats[i] == "international") {
-	// 		numHeadsInternational++;
-	// 	}
-	// 	else if (wpCats[i] == "miscellaneous") {
-	// 		numHeadsMisc++;
-	// 	}
-	// 	/*add data to wp json data unit*/
-	// 	wpData2.numHeads = wpNumHeads;
-	// 	wpData2.color = "lightblue";
-	// 	wpData2.source = "Washington Post";
-	// 	wpData2.politics = numHeadsPolitics;
-	// 	wpData2.tech = numHeadsTech;
-	// 	wpData2.sports = numHeadsSports;
-	// 	wpData2.env = numHeadsEnv;
-	// 	wpData2.int = numHeadsInternational;
-	//  	wpData2.misc = numHeadsMisc;
-
-	//  	numHeadsPolitics = 0;
-	// 	numHeadsTech = 0;
-	// 	numHeadsSports = 0;
-	// 	numHeadsEnv = 0;
-	// 	numHeadsInternational = 0;
-	// 	numHeadsMisc = 0;
-
-	// }
-
-	// /*ABC*/
-	// for (var i = 0; i < abcCats.length; i++) {
-	// 	if (abcCats[i] == "politics") {
-	// 		numHeadsPolitics++;
-	// 	}
-	// 	else if (abcCats[i] == "sports") {
-	// 		numHeadsSports++;
-	// 	}
-	// 	else if (abcCats[i] == "technology") {
-	// 		numHeadsTech++;
-	// 	}
-	// 	else if (abcCats[i] == "environment") {
-	// 		numHeadsEnv++;
-	// 	}
-	// 	else if (abcCats[i] == "international") {
-	// 		numHeadsInternational++;
-	// 	}
-	// 	else if (abcCats[i] == "miscellaneous") {
-	// 		numHeadsMisc++;
-	// 	}
-	// 	/*add data to abc json data unit*/
-	// 	abcData2.numHeads = abcNumHeads;
-	// 	abcData2.color = "green";
-	// 	abcData2.source = "ABC";
-	// 	abcData2.politics = numHeadsPolitics;
-	// 	abcData2.tech = numHeadsTech;
-	// 	abcData2.sports = numHeadsSports;
-	// 	abcData2.env = numHeadsEnv;
-	// 	abcData2.int = numHeadsInternational;
-	//  	abcData2.misc = numHeadsMisc;
-
-	//  	numHeadsPolitics = 0;
-	// 	numHeadsTech = 0;
-	// 	numHeadsSports = 0;
-	// 	numHeadsEnv = 0;
-	// 	numHeadsInternational = 0;
-	// 	numHeadsMisc = 0;
-
-	// }
-	
-	// /*bb*/
-	// for (var i = 0; i < bbCats.length; i++) {
-	// 	if (bbCats[i] == "politics") {
-	// 		numHeadsPolitics++;
-	// 	}
-	// 	else if (bbCats[i] == "sports") {
-	// 		numHeadsSports++;
-	// 	}
-	// 	else if (bbCats[i] == "technology") {
-	// 		numHeadsTech++;
-	// 	}
-	// 	else if (bbCats[i] == "environment") {
-	// 		numHeadsEnv++;
-	// 	}
-	// 	else if (bbCats[i] == "international") {
-	// 		numHeadsInternational++;
-	// 	}
-	// 	else if (bbCats[i] == "miscellaneous") {
-	// 		numHeadsMisc++;
-	// 	}
-	// 	/*add data to bb json data unit*/
-	// 	bbData2.numHeads = bbNumHeads;
-	// 	bbData2.color = "yellow";
-	// 	bbData2.source = "Breitbart";
-	// 	bbData2.politics = numHeadsPolitics;
-	// 	bbData2.tech = numHeadsTech;
-	// 	bbData2.sports = numHeadsSports;
-	// 	bbData2.env = numHeadsEnv;
-	// 	bbData2.int = numHeadsInternational;
-	//  	bbData2.misc = numHeadsMisc;
-
-	//  	numHeadsPolitics = 0;
-	// 	numHeadsTech = 0;
-	// 	numHeadsSports = 0;
-	// 	numHeadsEnv = 0;
-	// 	numHeadsInternational = 0;
-	// 	numHeadsMisc = 0;
-
-	// }
-
-	// /*Buzzfeed*/
-	// for (var i = 0; i < bfCats.length; i++) {
-	// 	if (bfCats[i] == "politics") {
-	// 		numHeadsPolitics++;
-	// 	}
-	// 	else if (bfCats[i] == "sports") {
-	// 		numHeadsSports++;
-	// 	}
-	// 	else if (bfCats[i] == "technology") {
-	// 		numHeadsTech++;
-	// 	}
-	// 	else if (bfCats[i] == "environment") {
-	// 		numHeadsEnv++;
-	// 	}
-	// 	else if (bfCats[i] == "international") {
-	// 		numHeadsInternational++;
-	// 	}
-	// 	else if (bfCats[i] == "miscellaneous") {
-	// 		numHeadsMisc++;
-	// 	}
-	// 	/*add data to bf json data unit*/
-	// 	bfData2.numHeads = bfNumHeads;
-	// 	bfData2.color = "pink";
-	// 	bfData2.source = "Buzzfeed";
-	// 	bfData2.politics = numHeadsPolitics;
-	// 	bfData2.tech = numHeadsTech;
-	// 	bfData2.sports = numHeadsSports;
-	// 	bfData2.env = numHeadsEnv;
-	// 	bfData2.int = numHeadsInternational;
-	//  	bfData2.misc = numHeadsMisc;
-
-	//  	numHeadsPolitics = 0;
-	// 	numHeadsTech = 0;
-	// 	numHeadsSports = 0;
-	// 	numHeadsEnv = 0;
-	// 	numHeadsInternational = 0;
-	// 	numHeadsMisc = 0;
-
-	// }
-
-	// /*China Daily*/
-	// for (var i = 0; i < cdCats.length; i++) {
-	// 	if (cdCats[i] == "politics") {
-	// 		numHeadsPolitics++;
-	// 	}
-	// 	else if (cdCats[i] == "sports") {
-	// 		numHeadsSports++;
-	// 	}
-	// 	else if (cdCats[i] == "technology") {
-	// 		numHeadsTech++;
-	// 	}
-	// 	else if (cdCats[i] == "environment") {
-	// 		numHeadsEnv++;
-	// 	}
-	// 	else if (cdCats[i] == "international") {
-	// 		numHeadsInternational++;
-	// 	}
-	// 	else if (cdCats[i] == "miscellaneous") {
-	// 		numHeadsMisc++;
-	// 	}
-	// 	/*add data to cd json data unit*/
-	// 	cdData2.numHeads = cdNumHeads;
-	// 	cdData2.color = "maroon";
-	// 	cdData2.source = "China Daily";
-	// 	cdData2.politics = numHeadsPolitics;
-	// 	cdData2.tech = numHeadsTech;
-	// 	cdData2.sports = numHeadsSports;
-	// 	cdData2.env = numHeadsEnv;
-	// 	cdData2.int = numHeadsInternational;
-	//  	cdData2.misc = numHeadsMisc;
-
-	//  	numHeadsPolitics = 0;
-	// 	numHeadsTech = 0;
-	// 	numHeadsSports = 0;
-	// 	numHeadsEnv = 0;
-	// 	numHeadsInternational = 0;
-	// 	numHeadsMisc = 0;
-
-	// }
-
-	// /*Sixth Tone*/
-	// for (var i = 0; i < stCats.length; i++) {
-	// 	if (stCats[i] == "politics") {
-	// 		numHeadsPolitics++;
-	// 	}
-	// 	else if (stCats[i] == "sports") {
-	// 		numHeadsSports++;
-	// 	}
-	// 	else if (stCats[i] == "technology") {
-	// 		numHeadsTech++;
-	// 	}
-	// 	else if (stCats[i] == "environment") {
-	// 		numHeadsEnv++;
-	// 	}
-	// 	else if (stCats[i] == "international") {
-	// 		numHeadsInternational++;
-	// 	}
-	// 	else if (stCats[i] == "miscellaneous") {
-	// 		numHeadsMisc++;
-	// 	}
-	// 	/*add data to st json data unit*/
-	// 	stData2.numHeads = stNumHeads;
-	// 	stData2.color = "blueViolet";
-	// 	stData2.source = "Sixth Tone";
-	// 	stData2.politics = numHeadsPolitics;
-	// 	stData2.tech = numHeadsTech;
-	// 	stData2.sports = numHeadsSports;
-	// 	stData2.env = numHeadsEnv;
-	// 	stData2.int = numHeadsInternational;
-	//  	stData2.misc = numHeadsMisc;
-
-	//  	numHeadsPolitics = 0;
-	// 	numHeadsTech = 0;
-	// 	numHeadsSports = 0;
-	// 	numHeadsEnv = 0;
-	// 	numHeadsInternational = 0;
-	// 	numHeadsMisc = 0;
-
-	// }
-
-	// jsonData2.push(wpData2);
-	// jsonData2.push(nbcData2);
-	// jsonData2.push(wpData2);
-	// jsonData2.push(abcData2);
-	// jsonData2.push(bbData2);
-	// jsonData2.push(bfData2);
-	// jsonData2.push(cdData2);
-	// jsonData2.push(stData2);
-
-	// console.log(jsonData2);
-
-	// /*create visualization!*/
-	// graph2.selectAll(".bar")
- //        .data(jsonData2)
- //        .enter()
- //        .append("rect")
- //        .attr("class", "bar")
- //        .attr("x", function (d) {
- //            //return x(d.x);
- //            return axisScaleX2.bandwidth();
+	/* create visualization */
+	graph2.selectAll(".bar")
+        .data(jsonData2)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", function (d) {
+            //return x(d.x);
+            return axisScaleX2.bandwidth();
             
- //        })
- //        .attr("y", function (d) {
- //            //return y(d.y + d.y0);
- //            return (containerHeight-60) - d.numHeads;
- //        })
- //        .attr("height", function (d) {
- //            //return y(d.y0) - y(d.y + d.y0);
- //            console.log(d);
- //            return d.numHeads;
- //        })
- //        .attr("width", function (d){
- //        	return axisScaleX2.bandwidth();
- //        	//return containerWidth/10;
- //        })
- //        .style("fill", function(d){
-	// 				return d.color
-	// 			});
+        })
+        .attr("y", function (d) {
+            //return y(d.y + d.y0);
+            console.log(d.numHeads);
+            return (containerHeight-60) - d.numHeads;
+        })
+        .attr("height", function (d) {
+            //return y(d.y0) - y(d.y + d.y0);
+            return d.numHeads;
+        })
+        .attr("width", function (d){
+        	return axisScaleX2.bandwidth();
+        	//return containerWidth/10;
+        })
+        .style("fill", function(d){
+					return d.color
+				});
+
+        /* graph2 title */
+        graph2.append("text")
+		        .attr("x", (containerWidth / 2))             
+		        .attr("y", 25)
+		        .attr("text-anchor", "middle")  
+		        .style("font-size", "36px") 
+		        .style("font-weight", "bold")
+		        .style("text-decoration", "underline")  
+		        .text("Headlines per News Source Category");
 
 }, function (error) {
     console.error('file loading error: ', error);
