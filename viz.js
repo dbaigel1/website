@@ -29,7 +29,7 @@ dataFile.then(function (data) {
     		i--;
     	}
     }
-    console.log(data); 
+    //console.log(data); 
 
     var containerWidth = 1000;
     var containerHeight = 500;
@@ -529,7 +529,7 @@ dataFile.then(function (data) {
 	jsonData.push(perfData);
 
 
-	console.log(jsonData);
+	//console.log(jsonData);
 
 	/*color legend*/
 	var colorScale = d3.scaleBand()
@@ -630,7 +630,7 @@ dataFile.then(function (data) {
 	var tooltip = d3.select("#graph1")
 						.append("div")
 						.attr('class', 'tooltip')
-						//.style("border", "2px solid black");
+						
 
 
 	tooltip.append("p")
@@ -656,7 +656,7 @@ dataFile.then(function (data) {
 				    })
 				    .style("fill-opacity", .5)
 				    .attr("class", function(d, i) {  
-  						return "source" + i;//colorScale.domain()[i];
+  						return "source" + i;
 
 					})
 				    
@@ -1067,8 +1067,23 @@ dataFile.then(function (data) {
 
 	console.log(jsonData2);
 	
-	/*TO-DO: change data to look like an array of categories, 
-	where in each category are the different news sources*/
+	/*TO-DO: change data to look like a category access instead of news source access
+	i.e. first node is politics...*/
+
+
+	/*
+
+	politics {
+		sourceArray[fox, nbc, wp...]
+		colorArray[red, green, lightblue...] #will be tied to source order
+		valueArray[14, 4, 8...] #will be tied to source order
+
+	}
+
+	Turn this structure into JSON by replacing current json structure
+	also make sure this will work by looking at videos online before changing it
+
+	*/
 	var categoryData = [];
 	var politicsArray = [];
 	var sportsArray = [];
@@ -1096,7 +1111,7 @@ dataFile.then(function (data) {
 	}
 	categoryData.push(politicsArray, sportsArray, intArray, envArray, techArray, miscArray);
 
-	console.log(categoryData);
+	//console.log(categoryData);
 
 	/* determine y axis scale using cat with most headlines*/
 	for (var i = 0; i < catCounts.length; i++) {
@@ -1161,26 +1176,26 @@ dataFile.then(function (data) {
         .append("rect")
         .attr("class", "bar")
         .attr("x", function (d) {
-            //return x(d.x);
+           
             return axisScaleX2.bandwidth();
             
         })
         .attr("y", function (d) {
-            //return y(d.y + d.y0);
-            console.log(d.numHeads);
+         
             return (containerHeight-60) - d.numHeads;
         })
         .attr("height", function (d) {
-            //return y(d.y0) - y(d.y + d.y0);
+            
             return d.numHeads;
         })
         .attr("width", function (d){
         	return axisScaleX2.bandwidth();
-        	//return containerWidth/10;
+        	
         })
         .style("fill", function(d){
-					return d.color
-				});
+			
+			return d.color;
+		});
 
         /* graph2 title */
         graph2.append("text")

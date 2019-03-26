@@ -1,0 +1,75 @@
+/*personal.css*/
+
+html {
+	background-color: lightblue;
+}
+
+p#intro {
+	font-size: 2.25em;
+}
+
+div.blank-space{
+	/*background-color: black;*/
+	height: 100px;
+	max-width: 100%;
+}
+
+div#navigators {
+	text-align:center;
+
+}
+
+.block {
+    position: relative;
+    display: inline-block;
+    width: 20%;
+    margin: 30px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+.image {
+  transition: .5s ease;
+  backface-visibility: hidden;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: #008CBA;
+}
+
+/*hovering*/
+.block:hover .image {
+  opacity: 0.3;
+}
+
+.block:hover .overlay{
+  opacity: 1;
+}
+
+/*this needs to be responsive*/
+.text {
+  color: white;
+  font-size: 2.5em;
+  text-align: center;
+  vertical-align: middle;
+
+  /*position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);*/
+}
+
+/* to remove bottom padding from images*/
+img {
+	vertical-align: bottom;
+}
