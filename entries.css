@@ -91,3 +91,19 @@ figure img {
 figcaption {
   font-size: 1.25em;
 }
+
+ul {
+  text-align: left;
+  margin-left: 30px;
+  margin-right: 30px;
+  font-size: 1.75em;
+}
+
+/*
+img.rotateimg90 {
+  -webkit-transform:rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+}*/
