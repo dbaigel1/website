@@ -28,11 +28,12 @@ dataFile.then(function (data) {
 
 //     /*gets rid of blank rows*/
     for(var i = 0; i < data.length; i++) {
-     	if(data[i]["Headline"] == "") {
+     	if(data[i]["Headline"] === undefined || data[i]["Headline"] == "") {
      		data.splice(i, 1);
      		i--;
      	}
      }
+     console.log(data);
 
 //     /* set size of graph */
     var containerWidth = 1000; //eventually make responsive 
