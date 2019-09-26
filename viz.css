@@ -1,19 +1,24 @@
 /*viz.css*/
 
+body {
+	background-color: #fffde7;
+}
+
+
 div.blank-space{
 	/*background-color: black;*/
 	height: 10px;
 	max-width: 100%;
 }
 
-div.title {
+/*div.title {
 	text-align: center;
-	/*background-color: blue;*/
 	height: 40px;
 	max-width: 100%;
+	font-family: 'Josefin Slab', serif;
 
 	
-}
+}*/
 
 .tooltip {
 	position: absolute;
@@ -26,13 +31,25 @@ div.title {
 	
 }
 
+/* dangerous, change*/
 p {
 	font-size: 25px;
 	text-align: center;
+	font-family: 'Josefin Slab', serif;
 }
 
 p#intro {
-	font-size: 30px;
+	font-size: 40px;
 	text-align: center;
+	font-family: 'Josefin Slab', serif;
+	padding-left: 100px;
+	padding-right: 100px;
 }
 
+p#outro {
+	font-size: 30px;
+	text-align: center;
+	font-family: 'Josefin Slab', serif;
+	padding-left: 100px;
+	padding-right: 100px;
+}

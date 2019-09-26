@@ -15,16 +15,6 @@
 // /*get data*/
 var dataFile = d3.csv("flat_file.csv"); //converts csv data to json
 dataFile.then(function (data) {
-//     /*create a helper file in Python to translate data into the format i want*/
-//     //outputs a new csv with 8 rows, each of which is a newsource
-//     // columns are data points: avg polarity, avg subj, num headlines, source name e.g. Fox
-
-//     //or, restructure csv so that each row is a single headline with a newsource column and timestamp
-//     //create buckets by newsource name
-//     //might need to do this first before getting to the top option
-
-//     //flatten csv file so each row is a single headline
-//     //create a set() on newsource names and then bucket by unique names
 
 //     /*gets rid of blank rows*/
     for(var i = 0; i < data.length; i++) {
@@ -45,7 +35,15 @@ dataFile.then(function (data) {
     }
 
 	var newsSources = Array.from(sourcesSet);//["Fox", "NBC", "Washington Post", "ABC", "Breitbart", "Buzzfeed", "China Daily", "Sixth Tone", "Target"]; /* contains order of newssources */
-	var colors = ["#000000", "#FF0000", "#FFA500", "#ADD8E6", "#008000", "#FFFF00", "#FFC0CB", "#800000", "#8A2BE2"];
+	var colors = ["#757575", 
+				  "#f44336", 
+				  "#ff9800", 
+				  "#03a9f4", 
+				  "#009688", 
+				  "#cddc39", 
+				  "#ec407a", 
+				  "#3f51b5", 
+				  "#9c27b0"];
 	var newsSourcesNoTarget = ["Fox", "NBC", "Wash Post", "ABC", "Breitbart", "BuzzFeed", "China Daily", "Sixth Tone"];
 	var categories = ["Politics", "Sports", "International", "Environment", "Technology", "Miscellaneous"];
 
@@ -83,9 +81,6 @@ dataFile.then(function (data) {
 
 // 			    /*.select() returns a graph object. Once you .append("svg") to the graph,
 // 			    that becomes the new object*/
-
-
-// 	/*.style("border", "1px solid black");*/ /* use to debug container */
 
 // 	/* Create Axes */
 	
@@ -132,6 +127,7 @@ dataFile.then(function (data) {
  
     var xAxisGroup = graph1.append("g")
     					   .attr("transform", `translate(0, ${containerHeight-30})`)
+    					   .attr("class", "x-axis")
     					   .call(xAxis);
 
     var axisScaleY = d3.scaleLinear()
@@ -143,15 +139,8 @@ dataFile.then(function (data) {
 
     var yAxisGroup = graph1.append("g")
     .attr("transform", "translate(30, 0)")
+    .attr("class", "y-axis")
     .call(yAxis);
-
-
-//  	/* data for target node */
-  	var idealPol = axisScaleX(0);
-  	var idealSubj = axisScaleY(0);
-
- 	total = 0;
- 	
 
 // 	/*color legend*/
 	var colorScale = d3.scaleBand() //for when you want to make barcharts
@@ -165,19 +154,13 @@ dataFile.then(function (data) {
 
     var radiusScale = d3.scaleLinear()
     					.domain(headlineRange)
-    					.range([20, 30]);	
-
-    //var axisScaleY = d3.scaleLinear()
-    //				   .domain([mostMaxS +0.1,0])
-    //				   .range([50,containerHeight-60]);
-
-    //var range = d3.extent(allAvgPols);				
+    					.range([20, 30]);					
 
 //     /*the data you pass in should be in data space, not pixel space. scale the data in the function */
 // 	/* add data elements */
 	graph1.selectAll("circle")
 				.data(finalData)  //everything you want to render but not scaled yet
-				.enter()
+				.enter() //when data is added to code after enter
 				.append("circle")
 				.attr("cx", function(d, i) {
 				
@@ -208,6 +191,9 @@ dataFile.then(function (data) {
 					tooltip.style("background-color", colorScale2(d.key));
 
 					graph1.selectAll(".source" + i)
+						  .transition()
+    					  .duration(800)
+    					  .ease(d3.easeLinear)
 						  .style("fill-opacity", 1)
 						  .style("font-weight", "bold")
 						  .attr("stroke-width", "2.5");
@@ -218,9 +204,12 @@ dataFile.then(function (data) {
 					tooltip.style("display", "none");
 
 					graph1.selectAll(".source" + i)
-							.style("fill-opacity", .5)
-							.style("font-weight", "normal")
-							.attr("stroke-width", "1");
+						  .transition()
+    					  .duration(800)
+    					  .ease(d3.easeLinear)
+						  .style("fill-opacity", .5)
+						  .style("font-weight", "normal")
+						  .attr("stroke-width", "1");
 				})
 				.on("mousemove", function(d){
 				
@@ -258,6 +247,12 @@ dataFile.then(function (data) {
 					  .style("top", yPos  + "px");
 
 				})
+				// On click, update with new data
+               
+
+               //});
+
+				//.exit()
 			
 	/* tooltip */
 	var tooltip = d3.select("#graph1")
@@ -324,7 +319,8 @@ dataFile.then(function (data) {
 	    .attr('x', 60)
 	    .attr('y', 30)
 	    .text(function(d) { return d; })
-	    .style('font-size', '20px');
+	    .attr("font-family", "Josefin Slab, serif")
+	    .style('font-size', '18px');
 
 	/* axis labels*/
 	var xLabel = graph1.append("text")
@@ -332,6 +328,7 @@ dataFile.then(function (data) {
 						     .attr("x", containerWidth/2)
 						     .attr("y", containerHeight-10)
 						     .style("font-size", "20px")
+						     .attr("font-family", "Josefin Slab, serif")
 						     .text("Polarity");
 
 	var yLabel = graph1.append("text")
@@ -340,6 +337,7 @@ dataFile.then(function (data) {
 						    .attr("x", -containerHeight/2)	
 						    .attr("transform", "rotate(-90)")
 						    .style("font-size", "20px")
+						    .attr("font-family", "Josefin Slab, serif")
 						    .text("Subjectivity");
 	/* graph1 title */
 	graph1.append("text")
@@ -348,7 +346,8 @@ dataFile.then(function (data) {
         .attr("text-anchor", "middle")  
         .style("font-size", "36px") 
         .style("font-weight", "bold")
-        .style("text-decoration", "underline")  
+        .style("text-decoration", "underline")
+        .attr("font-family", "Josefin Slab, serif")  
         .text("Polarity vs. Subjectivity");
 })
 // /******************************************************************/

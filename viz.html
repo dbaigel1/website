@@ -7,6 +7,9 @@
 	<link rel="stylesheet" href="viz.css" type="text/css"> 
 	<!--<script src="https://d3js.org/d3.v5.min.js"></script>-->
     <script type="text/javascript" src="d3/d3.min.js"></script>
+    <!--fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Slab&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display&display=swap" rel="stylesheet">
     
 </head>
 
@@ -14,7 +17,7 @@
 	
 	<div>
 		<p id = "intro">
-			While living in China for the past year, I haven't had easy access to Western news sources. After reading some Chinese news, I began wondering whether or not media companies across the Pacific operated in similar ways. I thought it would be interesting to see how subjective each source is on average, what topics they report on most often, and how polarized their language choice is. I targeted eight different news sources and gathered front page headlines from them over a period of a few months. The following are a few graphs that depict the data I gathered.
+			While living in China for the past year, I haven't had easy access to western news sources. After reading some Chinese news, I began wondering whether or not media companies across the Pacific operated in similar ways. I thought it would be interesting to see how subjective each source is on average, what topics they report on most often, and how polarized their language choice is. I targeted eight different news sources and gathered front page headlines from them over a period of a few months. The following are a few graphs that depict the data I gathered.
 		</p>
 
 	</div>
@@ -25,7 +28,7 @@
 	<div id = "graph1" align="center"></div>
 
 	<div>
-		<p>
+		<p id = "outro">
 			This chart shows how polar or subjective the average headline from a given news source is. Polarity is how polarized the speech is (-1 being the most negative while 1 being the most positive). Subjectivity is how factual the headline is (0 being an indisputable truth, while 1 being completely made up). The small circle located at 0 polarity and 0 subjectivity shows where a completely non-polar non-subjective news source would lie on the graph. Hover over any piece of data to learn more about it. These values are calculated using the TextBlob NLP Python library. For documentation on how they are calculated, check out <a href = "https://textblob.readthedocs.io/en/dev/"> this link. </a>	
 		</p>
 
