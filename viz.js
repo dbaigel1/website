@@ -2,28 +2,29 @@
 // Created by Daniel Baigel
 // to run locally -- python -m SimpleHTTPServer
 
-// */
-
-// /*TO-DO: 
-// 1. add descriptions for graphs above each graph
-// 2. make functions for code i.e. makeData, drawGraph, writeLabels, drawAxes etc.
-
-// graph1
-// 2. make whole thing responsive
-
 
 // /*get data*/
 var dataFile = d3.csv("flat_file.csv"); //converts csv data to json
 dataFile.then(function (data) {
 
+	foxData = [];
+	foxIndex = 0
 //     /*gets rid of blank rows*/
     for(var i = 0; i < data.length; i++) {
      	if(data[i]["Headline"] === undefined || data[i]["Headline"] == "") {
      		data.splice(i, 1);
      		i--;
      	}
+     	//testing
+     	else if(data[i]["NewsSourceName"] == "Fox"){
+     		foxData[foxIndex] = data[i];
+     		foxIndex++;
+
+     	}
      }
      console.log(data);
+     console.log(foxData);
+
 
 //     /* set size of graph */
     var containerWidth = 1000; //eventually make responsive 
@@ -86,15 +87,19 @@ dataFile.then(function (data) {
 	
 	/* Create Axes Ranges */
 	var avgPols = []; 
+	
 	for (var i = 0; i < finalData.length; i++) {
 		avgPols.push(finalData[i].value.avgPolarity);
 	}
+
  	var polRange = d3.extent(avgPols);
 
  	var avgSubjs = []; 
+
 	for (var i = 0; i < finalData.length; i++) {
 		avgSubjs.push(finalData[i].value.avgSubj);
 	}
+
  	var subjRange = d3.extent(avgSubjs);
  	
  	/* setup y-axis range */
@@ -156,6 +161,8 @@ dataFile.then(function (data) {
     					.domain(headlineRange)
     					.range([20, 30]);					
 
+    //for click function later on
+    var clicked = false;
 //     /*the data you pass in should be in data space, not pixel space. scale the data in the function */
 // 	/* add data elements */
 	graph1.selectAll("circle")
@@ -187,8 +194,10 @@ dataFile.then(function (data) {
 
 				})
 				.on("mouseover", function(d, i){
-					tooltip.style("display", null);
-					tooltip.style("background-color", colorScale2(d.key));
+					tooltip
+					.style("display", null)
+					.style("background-color", colorScale2(d.key));
+
 
 					graph1.selectAll(".source" + i)
 						  .transition()
@@ -233,7 +242,119 @@ dataFile.then(function (data) {
 							+ " Polarity: " + d.value.avgPolarity + 
 							" Subjectivity: " + d.value.avgSubj);
 
-						tooltip.style("background-color", colorScale2(d.key))
+						tooltip.style("width", 170+"px")
+								.style("height", 120+"px")
+								.style("text-align", "left")
+								.style("border", "2px solid black")
+								.transition()
+    					  .duration(600)
+    					  .ease(d3.easeLinear)
+    					  .style("background-color", colorScale2(d.key));
+
+
+					}
+
+					d3.select('.tooltip')
+					  .style("left", xPos + "px")
+					  .style("top", yPos  + "px");
+
+				})
+				/* TESTING ON CLICK*/
+				/*TODO: add scales for axes*/
+				.on("click", function(d, i) {
+					console.log(d);
+					console.log(i);
+					clickedD = d.key;
+					clicked = !clicked;
+
+					if (clicked == true){
+						graph1.selectAll("circle").remove();	
+						graph1.selectAll("circle")
+							.data(data)
+							.enter() //when data is added to code after enter
+							.append("circle")
+							.attr("cx", function(d, i) {
+			
+								if (d.NewsSourceName==clickedD) {
+									return axisScaleX(d.Polarity);
+								}
+								else {
+									return null;
+								}	
+							
+							})
+							.attr("cy", function(d, i) {
+							
+								if (d.NewsSourceName==clickedD) {
+									return axisScaleY(d.Subjectivity);
+								}
+								else {
+									return null;
+								}	
+							
+							})
+							.attr("r", function(d){
+							return 10;
+							//return radiusScale(d.value.numHeads);	
+							})
+							.style("fill", function(d, i){
+							
+							return colorScale2(d.NewsSourceName);
+							})
+							.style("fill-opacity", .5)
+							.style("stroke", "black")
+							.attr("class", function(d, i) {  
+			  					
+			  					return "source" + i; 
+
+							})
+							.on("mouseover", function(d, i){
+					tooltip.style("display", null);
+					tooltip.style("background-color", colorScale2(d.key));
+
+					graph1.selectAll(".source" + i)
+						  .transition()
+    					  .duration(800)
+    					  .ease(d3.easeLinear)
+						  .style("fill-opacity", 1)
+						  .style("font-weight", "bold")
+						  .attr("stroke-width", "2.5");
+
+				})
+				.on("mouseout", function(d, i){
+					
+					tooltip.style("display", "none");
+
+					graph1.selectAll(".source" + i)
+						  .transition()
+    					  .duration(800)
+    					  .ease(d3.easeLinear)
+						  .style("fill-opacity", .5)
+						  .style("font-weight", "normal")
+						  .attr("stroke-width", "1");
+				})
+				.on("mousemove", function(d){
+				
+					var xPos = d3.event.pageX;
+					var yPos = d3.event.pageY;
+
+
+					//tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
+					if (d.key == "Target") {
+						tooltip.select("p").text(d.key);
+						tooltip.style("background-color", "gray")
+								.style("width", 60+"px")
+								.style("height", 60+"px")
+								.style("text-align", "center")
+								.style("border", "2px solid black");
+					
+					}
+					else {
+						tooltip.select("p").html(d.NewsSourceName + "<br>"  
+							+ " Polarity: " + d.Polarity + 
+							" Subjectivity: " + d.Subjectivity);
+
+						tooltip.style("background-color", colorScale2(d.NewsSourceName))
 								.style("width", 170+"px")
 								.style("height", 120+"px")
 								.style("text-align", "left")
@@ -247,12 +368,12 @@ dataFile.then(function (data) {
 					  .style("top", yPos  + "px");
 
 				})
-				// On click, update with new data
-               
+					}
+				})
+				
 
-               //});
-
-				//.exit()
+	
+//});	
 			
 	/* tooltip */
 	var tooltip = d3.select("#graph1")
