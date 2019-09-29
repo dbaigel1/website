@@ -40,7 +40,7 @@ dataFile.then(function (data) {
 				    .style("fill-opacity", 0)
 				    
 				    .on("click", function(d, i){
-						/* click 2 in process */
+						/* click 2 in process going from layover back to normal */
 						graph1.selectAll("circle").remove();
 						graph1.select(".y-axis2").remove();
 						graph1.select(".x-axis2").remove();
@@ -122,8 +122,6 @@ dataFile.then(function (data) {
 					var xPos = d3.event.pageX;
 					var yPos = d3.event.pageY;
 
-
-					//tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
 					if (d.key == "Target") {
 						tooltip.select("p").text(d.key);
 						tooltip.style("background-color", "gray")
@@ -158,7 +156,7 @@ dataFile.then(function (data) {
 				})
 
 				.on("click", function(d, i) {
-					/* click 3 in process*/
+					/* click 3 in process, going from normal back to layover for 1-n times */
 					clickedD = d.key;
 					allPols = [];
 					allSubjs = [];
@@ -203,10 +201,12 @@ dataFile.then(function (data) {
 
 					addLayover();
 
+					/* get rid of legend */
 					legend.transition()
 								.duration(800)
     					  		.ease(d3.easeLinear)
 						  		.style("fill-opacity", 0);
+
 
 					graph1.selectAll("circle").remove();
 					graph1.select(".y-axis").remove();
@@ -258,37 +258,37 @@ dataFile.then(function (data) {
 
 						})
 						.on("mouseover", function(d, i){
-				tooltip.style("display", null);
-				tooltip.style("background-color", colorScale2(d.key));
-
-				graph1.selectAll(".source" + i)
-					  .transition()
-					  .duration(800)
-					  .ease(d3.easeLinear)
-					  .style("fill-opacity", 1)
-					  .style("font-weight", "bold")
-					  .attr("stroke-width", "2.5");
-
-				})
-				.on("mouseout", function(d, i){
+							tooltip.style("display", null);
+							tooltip.style("background-color", colorScale2(d.key));
+							
 					
-					tooltip.style("display", "none");
 
-					graph1.selectAll(".source" + i)
-						  .transition()
-    					  .duration(800)
-    					  .ease(d3.easeLinear)
-						  .style("fill-opacity", .5)
-						  .style("font-weight", "normal")
-						  .attr("stroke-width", "1");
-				})
+							graph1.selectAll(".source" + i)
+								  .transition()
+								  .duration(800)
+								  .ease(d3.easeLinear)
+								  .style("fill-opacity", 1)
+								  .style("font-weight", "bold")
+								  .attr("stroke-width", "2.5");
+
+						})
+						.on("mouseout", function(d, i){
+							
+							tooltip.style("display", "none");
+
+							graph1.selectAll(".source" + i)
+								  .transition()
+		    					  .duration(800)
+		    					  .ease(d3.easeLinear)
+								  .style("fill-opacity", .5)
+								  .style("font-weight", "normal")
+								  .attr("stroke-width", "1");
+						})
 				.on("mousemove", function(d){
 				
 					var xPos = d3.event.pageX;
 					var yPos = d3.event.pageY;
 
-
-					//tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
 					if (d.key == "Target") {
 						tooltip.select("p").text(d.key);
 						tooltip.style("background-color", "gray")
@@ -299,8 +299,10 @@ dataFile.then(function (data) {
 					
 					}
 					else {
-						tooltip.select("p").html(d.NewsSourceName + "<br>"  
-							+ " Polarity: " + d.Polarity + 
+				
+							/* change tooltip text */
+						tooltip.select("p").html(d.NewsSourceName + "<br>" + d.Headline + "<br>" +
+							" Polarity: " + d.Polarity + 
 							" Subjectivity: " + d.Subjectivity);
 
 						tooltip.style("background-color", colorScale2(d.NewsSourceName))
@@ -318,7 +320,6 @@ dataFile.then(function (data) {
 
 				})
 				})
-				    	console.log("clicking the thing");
 
 					});
 
@@ -561,7 +562,7 @@ dataFile.then(function (data) {
 		
 			
 				.on("click", function(d, i) {
-					/* click 1 in process*/
+					/* click 1 in process going from original to individual headlines for first time */
 					clickedD = d.key;
 					
 					allPols = [];
@@ -667,66 +668,74 @@ dataFile.then(function (data) {
 
 						})
 						.on("mouseover", function(d, i){
-				tooltip.style("display", null);
-				tooltip.style("background-color", colorScale2(d.key));
+							tooltip.style("display", null);
+							tooltip.style("background-color", colorScale2(d.key));
 
-				graph1.selectAll(".source" + i)
-					  .transition()
-					  .duration(800)
-					  .ease(d3.easeLinear)
-					  .style("fill-opacity", 1)
-					  .style("font-weight", "bold")
-					  .attr("stroke-width", "2.5");
+							graph1.selectAll(".source" + i)
+								  .transition()
+								  .duration(800)
+								  .ease(d3.easeLinear)
+								  .style("fill-opacity", 1)
+								  .style("font-weight", "bold")
+								  .attr("stroke-width", "2.5");
 
-				})
-				.on("mouseout", function(d, i){
+						})
+						.on("mouseout", function(d, i){
 					
-					tooltip.style("display", "none");
+							tooltip.style("display", "none");
 
-					graph1.selectAll(".source" + i)
-						  .transition()
-    					  .duration(800)
-    					  .ease(d3.easeLinear)
-						  .style("fill-opacity", .5)
-						  .style("font-weight", "normal")
-						  .attr("stroke-width", "1");
-				})
-				.on("mousemove", function(d){
+							graph1.selectAll(".source" + i)
+								  .transition()
+		    					  .duration(800)
+		    					  .ease(d3.easeLinear)
+								  .style("fill-opacity", .5)
+								  .style("font-weight", "normal")
+								  .attr("stroke-width", "1");
+						})
+						.on("mousemove", function(d){
 				
-					var xPos = d3.event.pageX;
-					var yPos = d3.event.pageY;
+							var xPos = d3.event.pageX;
+							var yPos = d3.event.pageY;
 
 
-					//tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
-					if (d.key == "Target") {
-						tooltip.select("p").text(d.key);
-						tooltip.style("background-color", "gray")
-								.style("width", 60+"px")
-								.style("height", 60+"px")
-								.style("text-align", "center")
-								.style("border", "2px solid black");
-					
-					}
-					else {
-						tooltip.select("p").html(d.NewsSourceName + "<br>"  
-							+ " Polarity: " + d.Polarity + 
-							" Subjectivity: " + d.Subjectivity);
+							if (d.key == "Target") {
+								tooltip.select("p").text(d.key);
+								tooltip.style("background-color", "gray")
+										.style("width", 60+"px")
+										.style("height", 60+"px")
+										.style("text-align", "center")
+										.style("border", "2px solid black");
+							
+							}
+							else {
+								
+								tooltip.select("p").html(d.NewsSourceName + "<br>" + d.Headline + "<br>" +
+								" Polarity: " + d.Polarity + 
+								" Subjectivity: " + d.Subjectivity)
+								
 
-						tooltip.style("background-color", colorScale2(d.NewsSourceName))
-								.style("width", 170+"px")
-								.style("height", 120+"px")
-								.style("text-align", "left")
-								.style("border", "2px solid black");
+								tooltip.style("background-color", colorScale2(d.NewsSourceName))
+										.style("width", 170+"px")
+										.style("height", 120+"px")
+										.style("text-align", "left")
+										.style("border", "2px solid black");
 
 
-					}
+							}
 
-					d3.select('.tooltip')
-					  .style("left", xPos + "px")
-					  .style("top", yPos  + "px");
+							d3.select('.tooltip')
+							  .style("left", xPos + "px")
+							  .style("top", yPos  + "px");
 
-				})
-				})
+						})
+						.on("click", function(d, i){
+							/* click 4, on the headline bubble to toggle the tooltip text switch */
+
+							tooltip.select("p").html(d.NewsSourceName + "<br>" + d.Headline + "<br>" +
+								" Polarity: " + d.Polarity + 
+								" Subjectivity: " + d.Subjectivity)
+						})
+					})
 			
 	/* tooltip */
 	var tooltip = d3.select("#graph1")
