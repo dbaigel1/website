@@ -7,29 +7,331 @@
 var dataFile = d3.csv("flat_file.csv"); //converts csv data to json
 dataFile.then(function (data) {
 
-	foxData = [];
-	foxIndex = 0
 //     /*gets rid of blank rows*/
     for(var i = 0; i < data.length; i++) {
      	if(data[i]["Headline"] === undefined || data[i]["Headline"] == "") {
      		data.splice(i, 1);
      		i--;
      	}
-     	//testing
-     	else if(data[i]["NewsSourceName"] == "Fox"){
-     		foxData[foxIndex] = data[i];
-     		foxIndex++;
-
-     	}
      }
-     console.log(data);
-     console.log(foxData);
 
 
 //     /* set size of graph */
     var containerWidth = 1000; //eventually make responsive 
     var containerHeight = 500;
     
+    /* function to add transparent rectangle layover over graph during click */
+    function addLayover() {
+		
+    	var layover = d3.select('svg')
+				    .append("g")
+				    .selectAll("g")
+				    .data(data)
+				    .enter()
+				    .append('g')
+				      .attr('class', 'layover')
+				      .attr('transform', function(d, i) {
+				        var height = containerHeight;
+				        var width = containerWidth;
+				        var x = 0;
+				        var y = 0;
+				        return 'translate(' + x + ',' + y + ')';
+				    })
+				    .style("fill-opacity", 0)
+				    
+				    .on("click", function(d, i){
+						/* click 2 in process */
+						graph1.selectAll("circle").remove();
+						graph1.select(".y-axis2").remove();
+						graph1.select(".x-axis2").remove();
+
+						legend.transition()
+								.duration(800)
+    					  		.ease(d3.easeLinear)
+						  		.style("fill-opacity", 0.5);
+
+
+						var xAxisGroup = graph1.append("g")
+    					   .attr("transform", `translate(0, ${containerHeight-30})`)
+    					   .attr("class", "x-axis")
+    					   .call(xAxis);
+
+
+						var yAxisGroup = graph1.append("g")
+					    .attr("transform", "translate(30, 0)")
+					    .attr("class", "y-axis")
+					    .call(yAxis);
+
+				graph1.selectAll("circle")
+				.data(finalData)  //everything you want to render but not scaled yet
+				.enter() //when data is added to code after enter
+				.append("circle")
+				.attr("cx", function(d, i) {
+				
+ 					return axisScaleX(d.value.avgPolarity);
+					
+				})
+ 				.attr("cy", function(d, i) {
+					
+					return axisScaleY(d.value.avgSubj)
+				})
+				.attr("r", function(d){
+					
+					return radiusScale(d.value.numHeads);	
+				})
+				.style("fill", function(d, i){
+					
+					return colorScale2(d.key);
+				})
+				.style("fill-opacity", .5)
+				.style("stroke", "black")
+				.attr("class", function(d, i) {  
+  					
+  					return "source" + i; 
+
+				})
+				.on("mouseover", function(d, i){
+					tooltip
+					.style("display", null)
+					.style("background-color", colorScale2(d.key));
+
+
+					graph1.selectAll(".source" + i)
+						  .transition()
+    					  .duration(800)
+    					  .ease(d3.easeLinear)
+						  .style("fill-opacity", 1)
+						  .style("font-weight", "bold")
+						  .attr("stroke-width", "2.5");
+
+				})
+				.on("mouseout", function(d, i){
+					
+					tooltip.style("display", "none");
+
+					graph1.selectAll(".source" + i)
+						  .transition()
+    					  .duration(800)
+    					  .ease(d3.easeLinear)
+						  .style("fill-opacity", .5)
+						  .style("font-weight", "normal")
+						  .attr("stroke-width", "1");
+				})
+				.on("mousemove", function(d){
+				
+					var xPos = d3.event.pageX;
+					var yPos = d3.event.pageY;
+
+
+					//tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
+					if (d.key == "Target") {
+						tooltip.select("p").text(d.key);
+						tooltip.style("background-color", "gray")
+								.style("width", 60+"px")
+								.style("height", 60+"px")
+								.style("text-align", "center")
+								.style("border", "2px solid black");
+					
+					}
+					else {
+						tooltip.select("p").html(d.key + "<br>" 
+							+ "Headlines: " + d.value.numHeads  
+							+ " Polarity: " + d.value.avgPolarity + 
+							" Subjectivity: " + d.value.avgSubj);
+
+						tooltip.style("width", 170+"px")
+								.style("height", 120+"px")
+								.style("text-align", "left")
+								.style("border", "2px solid black")
+								.transition()
+    					  .duration(600)
+    					  .ease(d3.easeLinear)
+    					  .style("background-color", colorScale2(d.key));
+
+
+					}
+
+					d3.select('.tooltip')
+					  .style("left", xPos + "px")
+					  .style("top", yPos  + "px");
+
+				})
+
+				.on("click", function(d, i) {
+					/* click 3 in process*/
+					clickedD = d.key;
+					allPols = [];
+					allSubjs = [];
+					for (var i = 0; i < data.length; i++) {
+						allPols[i] = data[i].Polarity;
+						allSubjs[i] = data[i].Subjectivity;
+					}
+
+					var polRange2 = d3.extent(allPols);
+					
+					var axisScaleX2 = d3.scaleLinear()
+                       					.domain([-1, 1])
+                       					.range([50,containerWidth-50]);
+
+					var xAxis2 = d3.axisTop()
+                  				.scale(axisScaleX2);
+
+                  	var subjRange2 = d3.extent(allSubjs);
+                  	
+                  	var tempSubj2 = subjRange2[0];
+ 					subjRange2[0] = subjRange2[1];
+ 					subjRange2[1] = tempSubj2; 
+                  	
+                  	var axisScaleY2 = d3.scaleLinear()
+                  						.domain(subjRange2)
+                  						.range([50,containerHeight-60]);
+                  	
+                  	var yAxis2 = d3.axisRight()
+                  					.scale(axisScaleY2);
+
+					
+                  	var xAxisGroup2 = graph1.append("g")
+    					   .attr("transform", `translate(0, ${containerHeight-30})`)
+    					   .attr("class", "x-axis2")
+    					   .call(xAxis2);
+
+
+				    var yAxisGroup2 = graph1.append("g")
+				    .attr("transform", "translate(30, 0)")
+				    .attr("class", "y-axis2")
+				    .call(yAxis2);
+
+					addLayover();
+
+					legend.transition()
+								.duration(800)
+    					  		.ease(d3.easeLinear)
+						  		.style("fill-opacity", 0);
+
+					graph1.selectAll("circle").remove();
+					graph1.select(".y-axis").remove();
+					graph1.select(".x-axis").remove();	
+					graph1.selectAll("circle")
+						.data(data)
+						.enter() //when data is added to code after enter
+						.append("circle")
+						.attr("cx", function(d, i) {
+		
+							if (d.NewsSourceName==clickedD) {
+								
+								return axisScaleX2(d.Polarity);
+							}
+							else {
+								return null;
+							}	
+						
+						})
+						.attr("cy", function(d, i) {
+						
+							if (d.NewsSourceName==clickedD) {
+								return axisScaleY2(d.Subjectivity);
+							}
+							else {
+								return null;
+							}	
+						
+						})
+						.attr("r", function(d){
+							if (clickedD == d.NewsSourceName) {
+								return 10;
+							}
+							else{
+								return null;
+							}
+							
+						//return radiusScale(d.value.numHeads);	
+						})
+						.style("fill", function(d, i){
+						
+							return colorScale2(d.NewsSourceName);
+						})
+						.style("fill-opacity", .5)
+						.style("stroke", "black")
+						.attr("class", function(d, i) {  
+		  					
+		  					return "source" + i; 
+
+						})
+						.on("mouseover", function(d, i){
+				tooltip.style("display", null);
+				tooltip.style("background-color", colorScale2(d.key));
+
+				graph1.selectAll(".source" + i)
+					  .transition()
+					  .duration(800)
+					  .ease(d3.easeLinear)
+					  .style("fill-opacity", 1)
+					  .style("font-weight", "bold")
+					  .attr("stroke-width", "2.5");
+
+				})
+				.on("mouseout", function(d, i){
+					
+					tooltip.style("display", "none");
+
+					graph1.selectAll(".source" + i)
+						  .transition()
+    					  .duration(800)
+    					  .ease(d3.easeLinear)
+						  .style("fill-opacity", .5)
+						  .style("font-weight", "normal")
+						  .attr("stroke-width", "1");
+				})
+				.on("mousemove", function(d){
+				
+					var xPos = d3.event.pageX;
+					var yPos = d3.event.pageY;
+
+
+					//tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
+					if (d.key == "Target") {
+						tooltip.select("p").text(d.key);
+						tooltip.style("background-color", "gray")
+								.style("width", 60+"px")
+								.style("height", 60+"px")
+								.style("text-align", "center")
+								.style("border", "2px solid black");
+					
+					}
+					else {
+						tooltip.select("p").html(d.NewsSourceName + "<br>"  
+							+ " Polarity: " + d.Polarity + 
+							" Subjectivity: " + d.Subjectivity);
+
+						tooltip.style("background-color", colorScale2(d.NewsSourceName))
+								.style("width", 170+"px")
+								.style("height", 120+"px")
+								.style("text-align", "left")
+								.style("border", "2px solid black");
+
+
+					}
+
+					d3.select('.tooltip')
+					  .style("left", xPos + "px")
+					  .style("top", yPos  + "px");
+
+				})
+				})
+				    	console.log("clicking the thing");
+
+					});
+
+
+		layover.append('rect')
+		    .attr('width', containerWidth)
+		    .attr('height', containerHeight)
+		    .style('fill', 'red');
+
+		}
+
+
+
     var sourcesSet = new Set();
     for (var i = 0; i < data.length; i++) {
     	sourcesSet.add(data[i].NewsSourceName);
@@ -161,9 +463,6 @@ dataFile.then(function (data) {
     					.domain(headlineRange)
     					.range([20, 30]);					
 
-    //for click function later on
-    var clicked = false;
-//     /*the data you pass in should be in data space, not pixel space. scale the data in the function */
 // 	/* add data elements */
 	graph1.selectAll("circle")
 				.data(finalData)  //everything you want to render but not scaled yet
@@ -259,66 +558,125 @@ dataFile.then(function (data) {
 					  .style("top", yPos  + "px");
 
 				})
-				/* TESTING ON CLICK*/
-				/*TODO: add scales for axes*/
-				.on("click", function(d, i) {
-					console.log(d);
-					console.log(i);
-					clickedD = d.key;
-					clicked = !clicked;
-
-					if (clicked == true){
-						graph1.selectAll("circle").remove();	
-						graph1.selectAll("circle")
-							.data(data)
-							.enter() //when data is added to code after enter
-							.append("circle")
-							.attr("cx", function(d, i) {
+		
 			
-								if (d.NewsSourceName==clickedD) {
-									return axisScaleX(d.Polarity);
-								}
-								else {
-									return null;
-								}	
+				.on("click", function(d, i) {
+					/* click 1 in process*/
+					clickedD = d.key;
+					
+					allPols = [];
+					allSubjs = [];
+					for (var i = 0; i < data.length; i++) {
+						allPols[i] = data[i].Polarity;
+						allSubjs[i] = data[i].Subjectivity;
+					}
+
+					var polRange2 = d3.extent(allPols);
+					
+					var axisScaleX2 = d3.scaleLinear()
+                       					.domain([-1, 1])
+                       					.range([50,containerWidth-50]);
+
+					var xAxis2 = d3.axisTop()
+                  				.scale(axisScaleX2);
+
+                  	var subjRange2 = d3.extent(allSubjs);
+                  	
+                  	var tempSubj2 = subjRange2[0];
+ 					subjRange2[0] = subjRange2[1];
+ 					subjRange2[1] = tempSubj2; 
+                  	
+                  	var axisScaleY2 = d3.scaleLinear()
+                  						.domain(subjRange2)
+                  						.range([50,containerHeight-60]);
+                  	
+                  	var yAxis2 = d3.axisRight()
+                  					.scale(axisScaleY2);
+
+					
+                  	var xAxisGroup2 = graph1.append("g")
+				    					   .attr("transform", `translate(0, ${containerHeight-30})`)
+				    					   .attr("class", "x-axis2")
+				    					   .call(xAxis2);
+
+
+				    var yAxisGroup2 = graph1.append("g")
+										    .attr("transform", "translate(30, 0)")
+										    .attr("class", "y-axis2")
+										    .call(yAxis2);
+
+					/* add clear rectangle layover over graph */
+					addLayover();
+					
+					/* transition legend to fade away */
+					legend.transition()
+					  	  	.duration(800)
+					  		.ease(d3.easeLinear)
+							.style("fill-opacity", 0);
+
+					graph1.selectAll("circle").remove();
+
+					graph1.select(".y-axis").remove();
+
+					graph1.select(".x-axis").remove();	
+					
+					graph1.selectAll("circle")
+						.data(data)
+						.enter() //when data is added to code after enter
+						.append("circle")
+						.attr("cx", function(d, i) {
+		
+							if (d.NewsSourceName==clickedD) {
+								
+								return axisScaleX2(d.Polarity);
+							}
+							else {
+								return null;
+							}	
+						
+						})
+						.attr("cy", function(d, i) {
+						
+							if (d.NewsSourceName==clickedD) {
+								return axisScaleY2(d.Subjectivity);
+							}
+							else {
+								return null;
+							}	
+						
+						})
+						.attr("r", function(d){
+							if (clickedD == d.NewsSourceName) {
+								return 10;
+							}
+							else{
+								return null;
+							}
 							
-							})
-							.attr("cy", function(d, i) {
-							
-								if (d.NewsSourceName==clickedD) {
-									return axisScaleY(d.Subjectivity);
-								}
-								else {
-									return null;
-								}	
-							
-							})
-							.attr("r", function(d){
-							return 10;
-							//return radiusScale(d.value.numHeads);	
-							})
-							.style("fill", function(d, i){
-							
+						//return radiusScale(d.value.numHeads);	
+						})
+						.style("fill", function(d, i){
+						
 							return colorScale2(d.NewsSourceName);
-							})
-							.style("fill-opacity", .5)
-							.style("stroke", "black")
-							.attr("class", function(d, i) {  
-			  					
-			  					return "source" + i; 
+						})
+						.style("fill-opacity", .5)
+						.style("stroke", "black")
+						.attr("class", function(d, i) {  
+		  					
+		  					return "source" + i; 
 
-							})
-							.on("mouseover", function(d, i){
-					tooltip.style("display", null);
-					tooltip.style("background-color", colorScale2(d.key));
+						})
+						.on("mouseover", function(d, i){
+				tooltip.style("display", null);
+				tooltip.style("background-color", colorScale2(d.key));
 
-					graph1.selectAll(".source" + i)
-						  .transition()
-    					  .duration(800)
-    					  .ease(d3.easeLinear)
-						  .style("fill-opacity", 1)
-						  .style("font-weight", "bold")
-						  .attr("stroke-width", "2.5");
+				graph1.selectAll(".source" + i)
+					  .transition()
+					  .duration(800)
+					  .ease(d3.easeLinear)
+					  .style("fill-opacity", 1)
+					  .style("font-weight", "bold")
+					  .attr("stroke-width", "2.5");
 
 				})
 				.on("mouseout", function(d, i){
@@ -368,12 +726,7 @@ dataFile.then(function (data) {
 					  .style("top", yPos  + "px");
 
 				})
-					}
 				})
-				
-
-	
-//});	
 			
 	/* tooltip */
 	var tooltip = d3.select("#graph1")
