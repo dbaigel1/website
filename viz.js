@@ -210,7 +210,81 @@ dataFile.then(function (data) {
 
 					graph1.selectAll("circle").remove();
 					graph1.select(".y-axis").remove();
-					graph1.select(".x-axis").remove();	
+					graph1.select(".x-axis").remove();
+
+						/* add the average bubble */
+					for (var i = 0; i < finalData.length; i++) {
+						if (clickedD == finalData[i].key) {
+							/* create and append the average circle */
+							tempAvgPol = finalData[i].value.avgPolarity;
+							tempAvgSubj = finalData[i].value.avgSubj;
+
+							graph1.append("circle")
+							    .attr("cx", axisScaleX2(tempAvgPol))
+								.attr("cy", axisScaleY2(tempAvgSubj))
+								.attr("r", 50)
+								.style("fill", colorScale2(clickedD))
+								.style("fill-opacity", .3)
+								.style("stroke", "black")
+								.on("mouseover", function(){
+									
+									tooltip.style("display", null);
+									tooltip.style("background-color", colorScale2(clickedD));
+
+									graph1.selectAll(".source" + i)
+										  .transition()
+										  .duration(800)
+										  .ease(d3.easeLinear)
+										  .style("fill-opacity", 1)
+										  .style("font-weight", "bold")
+										  .attr("stroke-width", "2.5");
+
+								})
+								.on("mouseout", function(d, i){
+					
+									tooltip.style("display", "none");
+
+									graph1.selectAll(".source" + i)
+										  .transition()
+				    					  .duration(800)
+				    					  .ease(d3.easeLinear)
+										  .style("fill-opacity", 0) //test change back to 0.5 is something isn't working
+										  .style("font-weight", "normal")
+										  .attr("stroke-width", "1");
+								})
+
+								.on("mousemove", function(d){
+				
+									var xPos = d3.event.pageX;
+									var yPos = d3.event.pageY;
+
+							
+										
+									tooltip.select("p").html(clickedD + "<br>" +
+									"Average Polarity: " + tempAvgPol + "<br>" +
+									"Average Subjectivity: " + tempAvgSubj)
+									
+
+									tooltip.style("background-color", colorScale2(clickedD))
+											//.style("width", 170+"px")
+											//.style("height", 120+"px")
+											.style("width", "auto")
+											.style("height", "auto")
+											.style("text-align", "left")
+											.style("border", "2px solid black");
+
+
+									
+
+									d3.select('.tooltip')
+									  .style("left", xPos + "px")
+									  .style("top", yPos  + "px");
+
+								})
+						}
+					}
+
+
 					graph1.selectAll("circle")
 						.data(data)
 						.enter() //when data is added to code after enter
@@ -306,8 +380,10 @@ dataFile.then(function (data) {
 							" Subjectivity: " + d.Subjectivity);
 
 						tooltip.style("background-color", colorScale2(d.NewsSourceName))
-								.style("width", 170+"px")
-								.style("height", 120+"px")
+								//.style("width", 170+"px")
+								//.style("height", 120+"px")
+								.style("width", "auto")
+								.style("height", "auto")
 								.style("text-align", "left")
 								.style("border", "2px solid black");
 
@@ -319,9 +395,10 @@ dataFile.then(function (data) {
 					  .style("top", yPos  + "px");
 
 				})
-				})
+				
+			})
 
-					});
+		});
 
 
 		layover.append('rect')
@@ -530,20 +607,24 @@ dataFile.then(function (data) {
 					if (d.key == "Target") {
 						tooltip.select("p").text(d.key);
 						tooltip.style("background-color", "gray")
-								.style("width", 60+"px")
-								.style("height", 60+"px")
+								//.style("width", 60+"px")
+								//.style("height", 60+"px")
+								.style("width", "auto")
+								.style("height", "auto")
 								.style("text-align", "center")
 								.style("border", "2px solid black");
 					
 					}
 					else {
 						tooltip.select("p").html(d.key + "<br>" 
-							+ "Headlines: " + d.value.numHeads  
-							+ " Polarity: " + d.value.avgPolarity + 
+							+ "Headlines: " + d.value.numHeads + "<br>"
+							+ " Polarity: " + d.value.avgPolarity + "<br>" +
 							" Subjectivity: " + d.value.avgSubj);
 
 						tooltip.style("width", 170+"px")
 								.style("height", 120+"px")
+								//.style("width", "auto")
+								//.style("height", "auto")
 								.style("text-align", "left")
 								.style("border", "2px solid black")
 								.transition()
@@ -615,12 +696,92 @@ dataFile.then(function (data) {
 					  		.ease(d3.easeLinear)
 							.style("fill-opacity", 0);
 
+					
+				
+
 					graph1.selectAll("circle").remove();
 
 					graph1.select(".y-axis").remove();
 
 					graph1.select(".x-axis").remove();	
 					
+
+
+						/* add the average bubble */
+					for (var i = 0; i < finalData.length; i++) {
+						if (clickedD == finalData[i].key) {
+							/* create and append the average circle */
+							tempAvgPol = finalData[i].value.avgPolarity;
+							tempAvgSubj = finalData[i].value.avgSubj;
+
+							graph1.append("circle")
+							    .attr("cx", axisScaleX2(tempAvgPol))
+								.attr("cy", axisScaleY2(tempAvgSubj))
+								.attr("r", 50)
+								.style("fill", colorScale2(clickedD))
+								.style("fill-opacity", .3)
+								.style("stroke", "black")
+								.on("mouseover", function(){
+									
+									tooltip.style("display", null);
+									tooltip.style("background-color", colorScale2(clickedD));
+
+									graph1.selectAll(".source" + i)
+										  .transition()
+										  .duration(800)
+										  .ease(d3.easeLinear)
+										  .style("fill-opacity", 1)
+										  .style("font-weight", "bold")
+										  .attr("stroke-width", "2.5");
+
+								})
+								.on("mouseout", function(d, i){
+					
+									tooltip.style("display", "none");
+
+									graph1.selectAll(".source" + i)
+										  .transition()
+				    					  .duration(800)
+				    					  .ease(d3.easeLinear)
+										  .style("fill-opacity", 0) //test change back to 0.5 is something isn't working
+										  .style("font-weight", "normal")
+										  .attr("stroke-width", "1");
+								})
+
+								.on("mousemove", function(d){
+				
+									var xPos = d3.event.pageX;
+									var yPos = d3.event.pageY;
+
+							
+										
+									tooltip.select("p").html(clickedD + "<br>" +
+									"Average Polarity: " + tempAvgPol + "<br>" +
+									"Average Subjectivity: " + tempAvgSubj)
+									
+
+									tooltip.style("background-color", colorScale2(clickedD))
+											//.style("width", 170+"px")
+											//.style("height", 120+"px")
+											.style("width", "auto")
+											.style("height", "auto")
+											.style("text-align", "left")
+											.style("border", "2px solid black");
+
+
+									
+
+									d3.select('.tooltip')
+									  .style("left", xPos + "px")
+									  .style("top", yPos  + "px");
+
+								})
+
+								
+						}
+					}
+
+
 					graph1.selectAll("circle")
 						.data(data)
 						.enter() //when data is added to code after enter
@@ -710,13 +871,15 @@ dataFile.then(function (data) {
 							else {
 								
 								tooltip.select("p").html(d.NewsSourceName + "<br>" + d.Headline + "<br>" +
-								" Polarity: " + d.Polarity + 
+								" Polarity: " + d.Polarity + "<br>" +
 								" Subjectivity: " + d.Subjectivity)
 								
 
 								tooltip.style("background-color", colorScale2(d.NewsSourceName))
-										.style("width", 170+"px")
-										.style("height", 120+"px")
+										//.style("width", 170+"px")
+										//.style("height", 120+"px")
+										.style("width", "auto")
+										.style("height", "auto")
 										.style("text-align", "left")
 										.style("border", "2px solid black");
 
@@ -727,13 +890,6 @@ dataFile.then(function (data) {
 							  .style("left", xPos + "px")
 							  .style("top", yPos  + "px");
 
-						})
-						.on("click", function(d, i){
-							/* click 4, on the headline bubble to toggle the tooltip text switch */
-
-							tooltip.select("p").html(d.NewsSourceName + "<br>" + d.Headline + "<br>" +
-								" Polarity: " + d.Polarity + 
-								" Subjectivity: " + d.Subjectivity)
 						})
 					})
 			
