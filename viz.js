@@ -43,17 +43,22 @@ dataFile.then(function (data) {
 				    .on("click", function(d, i){
 						/* click 2 in process going from layover back to normal */
 						screen1 = true;
+						
 						graph1.selectAll("circle").remove();
-						/*graph1.selectAll("circle").transition().duration(600)
+                		
+                		/*graph1.selectAll("circle").transition()
+                		.duration(1200)
+                		.ease(d3.easeBackIn)
                 		.attr("r", 0)
-                		.remove();*/
+                		.remove();
+                		*/
 						
 						graph1.select(".y-axis2").remove();
 						graph1.select(".x-axis2").remove();
 						layover.remove();
 
 						legend.transition()
-								.duration(800)
+								.duration(500)
     					  		.ease(d3.easeLinear)
 						  		.style("fill-opacity", 0.5);
 
@@ -228,7 +233,9 @@ dataFile.then(function (data) {
 							legend.attr("class", "invisible");
 
 
-							graph1.selectAll("circle").transition().duration(1600)
+							graph1.selectAll("circle").transition()
+							.duration(1200)
+							.ease(d3.easeBackIn)
                 			.attr("r", 0)
                 			.remove();
 
@@ -354,7 +361,7 @@ dataFile.then(function (data) {
 						.style("stroke", "black")
 						.attr("class", function(d, i) {  
 		  					
-		  					return ""; 
+		  					return "headline"; 
 
 						})
 						.on("mouseover", function(d, i){
@@ -715,8 +722,9 @@ dataFile.then(function (data) {
 										    .attr("class", "y-axis2")
 										    .call(yAxis2);
 
-					graph1.selectAll("circle").transition().duration(1600)
+					graph1.selectAll("circle").transition().duration(1000)
                 	.attr("r", 0)
+                	.ease(d3.easeBackIn)
                 	.remove();
 					
 					graph1.select(".y-axis").remove();
@@ -770,14 +778,15 @@ dataFile.then(function (data) {
 								.on("mouseout", function(d, i){
 					
 									tooltip.style("display", "none");
-
+									if (screen1) {
 									graph1.selectAll(".source" + i)
 										  .transition()
 				    					  .duration(800)
 				    					  .ease(d3.easeLinear)
-										  .style("fill-opacity", 0) //test change back to 0.5 is something isn't working
+										  .style("fill-opacity", 0) 
 										  .style("font-weight", "normal")
 										  .attr("stroke-width", "1");
+									}
 								})
 
 								.on("mousemove", function(d){
@@ -855,7 +864,7 @@ dataFile.then(function (data) {
 						.style("stroke", "black")
 						.attr("class", function(d, i) {  
 		  					if (d.NewsSourceName==clickedD) {
-								return ""; 
+								return "headline"; 
 							}
 		  					
 
