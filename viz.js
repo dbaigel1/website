@@ -50,6 +50,10 @@ dataFile.then(function (data) {
     					  		.ease(d3.easeLinear)
 						  		.style("fill-opacity", 0.5);
 
+						legend.attr("class", function(d, i) {  
+  							return "source" + i;
+
+						})
 
 						var xAxisGroup = graph1.append("g")
     					   .attr("transform", `translate(0, ${containerHeight-30})`)
@@ -207,6 +211,9 @@ dataFile.then(function (data) {
     					  		.ease(d3.easeLinear)
 						  		.style("fill-opacity", 0);
 
+					/* keeps legend invisible on hovering over bubbles */
+					legend.attr("class", "invisible");
+
 
 					graph1.selectAll("circle").remove();
 					graph1.select(".y-axis").remove();
@@ -328,7 +335,7 @@ dataFile.then(function (data) {
 						.style("stroke", "black")
 						.attr("class", function(d, i) {  
 		  					
-		  					return "source" + i; 
+		  					return ""; 
 
 						})
 						.on("mouseover", function(d, i){
@@ -458,10 +465,6 @@ dataFile.then(function (data) {
  			    .attr("height", '80%')
  			    .attr('viewBox','0 0 '+ containerWidth +' '+containerHeight)
  			    .attr('preserveAspectRatio','xMinYMin');
- 			    //.style("border", "1px solid black");
-
-// 			    /*.select() returns a graph object. Once you .append("svg") to the graph,
-// 			    that becomes the new object*/
 
 // 	/* Create Axes */
 	
@@ -696,7 +699,7 @@ dataFile.then(function (data) {
 					  		.ease(d3.easeLinear)
 							.style("fill-opacity", 0);
 
-					
+					legend.attr("class", "invisible");
 				
 
 					graph1.selectAll("circle").remove();
@@ -761,8 +764,6 @@ dataFile.then(function (data) {
 									
 
 									tooltip.style("background-color", colorScale2(clickedD))
-											//.style("width", 170+"px")
-											//.style("height", 120+"px")
 											.style("width", "auto")
 											.style("height", "auto")
 											.style("text-align", "left")
@@ -824,8 +825,10 @@ dataFile.then(function (data) {
 						.style("fill-opacity", .5)
 						.style("stroke", "black")
 						.attr("class", function(d, i) {  
+		  					if (d.NewsSourceName==clickedD) {
+								return ""; 
+							}
 		  					
-		  					return "source" + i; 
 
 						})
 						.on("mouseover", function(d, i){
@@ -901,8 +904,6 @@ dataFile.then(function (data) {
 
 
 	tooltip.append("p")
-	//.attr("x", 15)
-	//.attr("dy", "1.2em")
 	.style("font-size", "1.25em")
 	.attr("font-weight", "bold");
 
@@ -989,5 +990,5 @@ dataFile.then(function (data) {
         .attr("font-family", "Josefin Slab, serif")  
         .text("Polarity vs. Subjectivity");
 })
-// /******************************************************************/
 
+// /******************************************************************/
