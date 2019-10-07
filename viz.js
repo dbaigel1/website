@@ -459,8 +459,9 @@ dataFile.then(function (data) {
 				  "#cddc39", 
 				  "#ec407a", 
 				  "#3f51b5", 
-				  "#9c27b0"];
-	var newsSourcesNoTarget = ["Fox", "NBC", "Wash Post", "ABC", "Breitbart", "BuzzFeed", "China Daily", "Sixth Tone"];
+				  "#9c27b0",
+				  "#8bc34a"];
+	//var newsSourcesNoTarget = ["Fox", "NBC", "Wash Post", "ABC", "Breitbart", "BuzzFeed", "China Daily", "Sixth Tone"];
 	var categories = ["Politics", "Sports", "International", "Environment", "Technology", "Miscellaneous"];
 
 	
@@ -477,7 +478,7 @@ dataFile.then(function (data) {
 						  }; })
   					  .entries(data);
   	
-
+  	console.log(finalData);
   	/* round polarity and subjectivity values */
   	for (var i = 0; i < finalData.length; i++) {
 		finalData[i].value.avgPolarity = Number(finalData[i].value.avgPolarity.toFixed(2));
