@@ -451,16 +451,16 @@ dataFile.then(function (data) {
     }
 
 	var newsSources = Array.from(sourcesSet);//["Fox", "NBC", "Washington Post", "ABC", "Breitbart", "Buzzfeed", "China Daily", "Sixth Tone", "Target"]; /* contains order of newssources */
-	var colors = ["#757575", 
-				  "#f44336", 
-				  "#ff9800", 
-				  "#03a9f4", 
-				  "#009688", 
-				  "#cddc39", 
-				  "#ec407a", 
-				  "#3f51b5", 
-				  "#9c27b0",
-				  "#8bc34a"];
+	var colors = ["#bdbdbd", 
+				  "#e57373", 
+				  "#ffb74d", 
+				  "#4fc3f7", 
+				  "#4db6ac", 
+				  "#dce775", 
+				  "#f06292", 
+				  "#7986cb", 
+				  "#ba68c8",
+				  "#aed581"];
 	//var newsSourcesNoTarget = ["Fox", "NBC", "Wash Post", "ABC", "Breitbart", "BuzzFeed", "China Daily", "Sixth Tone"];
 	var categories = ["Politics", "Sports", "International", "Environment", "Technology", "Miscellaneous"];
 
@@ -478,7 +478,6 @@ dataFile.then(function (data) {
 						  }; })
   					  .entries(data);
   	
-  	console.log(finalData);
   	/* round polarity and subjectivity values */
   	for (var i = 0; i < finalData.length; i++) {
 		finalData[i].value.avgPolarity = Number(finalData[i].value.avgPolarity.toFixed(2));
